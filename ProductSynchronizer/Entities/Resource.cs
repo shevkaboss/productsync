@@ -2,7 +2,7 @@
 {
     public enum Resource
     {
-        Stock,
+        Goat,
         Footasylum,
         JimmyJazz,
         Udentified

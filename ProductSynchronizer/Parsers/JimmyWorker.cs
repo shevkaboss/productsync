@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ProductSynchronizer.Entities;
 
 namespace ProductSynchronizer.Parsers
 {
@@ -12,22 +13,24 @@ namespace ProductSynchronizer.Parsers
 
             try
             {
-                var sizesConteiner = JObject.Parse(Regex.Match(response, "(?<=var meta =)(.*}})(?=;)").Groups[0].Value);
+                var sizesContainer = JObject.Parse(Regex.Match(response, "(?<=var meta =)(.*}})(?=;)").Groups[0].Value);
 
-                var productId = sizesConteiner["product"]["id"].ToObject<string>();
+                var productId = sizesContainer["product"]["id"].ToObject<string>();
 
 
-                foreach (var sizeVariantsObject in sizesConteiner["product"]["variants"].ToObject<List<JObject>>())
+                foreach (var sizeVariantsObject in sizesContainer["product"]["variants"].ToObject<List<JObject>>())
                 {
+                    var price = sizeVariantsObject["price"].ToObject<string>();
                     var jimmyShoeContext = new JimmyShoeContext
                     {
                         Id = sizeVariantsObject["id"].ToObject<string>(),
-                        InternalSize = sizeVariantsObject["public_title"].ToObject<string>()
+                        InternalSize = sizeVariantsObject["public_title"].ToObject<string>(),
+                        Price = price.Insert(price.Length - 2, ".")
                     };
 
                     var shoesSizeQuantityString = Regex.Match(response, $"(?<=\\[\'{productId}\'\\]\\[{jimmyShoeContext.Id}\\] = )(.*)(?=;)").Groups[0].Value;
 
-                    if (int.TryParse(shoesSizeQuantityString, out int shoesSizeQuantity))
+                    if (int.TryParse(shoesSizeQuantityString, out var shoesSizeQuantity))
                         jimmyShoeContext.Quantity = shoesSizeQuantity;
 
                     jimmyShoesSizeMap.Add(jimmyShoeContext);
@@ -35,7 +38,7 @@ namespace ProductSynchronizer.Parsers
             }
             catch
             {
-
+                // ignored
             }
 
             return jimmyShoesSizeMap;

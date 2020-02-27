@@ -1,5 +1,6 @@
 ﻿using ProductSynchronizer.Helpers;
 using System.Collections.Generic;
+using ProductSynchronizer.Entities;
 
 namespace ProductSynchronizer.Parsers
 {

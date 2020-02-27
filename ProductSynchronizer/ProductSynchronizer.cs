@@ -38,13 +38,14 @@ namespace ProductSynchronizer
         #region private Methods
         private IEnumerable<SyncRunner> CreateRunners(IEnumerable<Product> products)
         {
+            var prodList = products.ToList();
             return new List<SyncRunner>
             {
-                new SyncRunner(products.Where(x => x.Resource == Resource.JimmyJazz), new JimmyWorker()),
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.JimmyJazz), new JimmyWorker()),
 
-                new SyncRunner(products.Where(x => x.Resource == Resource.Stock), new StockWorker()),
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.Goat), new StockWorker()),
 
-                new SyncRunner(products.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker())
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker())
             };
         }
 

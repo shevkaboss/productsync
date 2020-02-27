@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ProductSynchronizer.Entities;
 
 namespace ProductSynchronizer
 {
@@ -16,7 +17,7 @@ namespace ProductSynchronizer
                 {
                     case Constants.STOCK_URL:
                         {
-                            return Resource.Stock;
+                            return Resource.Goat;
                         }
                     case Constants.FOOTASYLUM_URL:
                         {

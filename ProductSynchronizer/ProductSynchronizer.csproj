@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Entities\ShoeContext.cs" />
     <Compile Include="Helpers\HttpRequestHelper.cs" />
     <Compile Include="Helpers\MySqlHelper.cs" />
     <Compile Include="Entities\ISizeMapNode.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Parsers\IWorker.cs" />
     <Compile Include="Parsers\JimmyWorker.cs" />
     <Compile Include="Parsers\StockWorker.cs" />
+    <Compile Include="Parsers\GoatWorker.cs" />
     <Compile Include="Parsers\WorkerBase.cs" />
     <Compile Include="Entities\Product.cs" />
     <Compile Include="ProductSynchronizer.cs">

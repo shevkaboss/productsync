@@ -1,10 +1,7 @@
-﻿namespace ProductSynchronizer
+﻿namespace ProductSynchronizer.Entities
 {
-    class JimmyShoeContext : ISizeMapNode
+    internal class JimmyShoeContext : ShoeContext
     {
         public string Id { get; set; }
-        public int Quantity { get; set; }
-        public string InternalSize { get; set; }
-        public string ExternalSize { get; set; }
     }
 }
