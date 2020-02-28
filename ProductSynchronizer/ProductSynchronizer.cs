@@ -43,7 +43,7 @@ namespace ProductSynchronizer
             {
                 new SyncRunner(prodList.Where(x => x.Resource == Resource.JimmyJazz), new JimmyWorker()),
 
-                new SyncRunner(prodList.Where(x => x.Resource == Resource.Goat), new StockWorker()),
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.Goat), new GoatWorker()),
 
                 new SyncRunner(prodList.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker())
             };
