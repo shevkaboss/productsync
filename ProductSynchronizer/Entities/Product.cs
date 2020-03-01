@@ -4,18 +4,27 @@ using ProductSynchronizer.Entities;
 
 namespace ProductSynchronizer
 {
+    public enum Gender
+    {
+        Man = 60,
+        Woman = 59,
+        Male = 60,
+        Female = 59
+    }
     public class Product
     { 
         public int InternalId { get; set; }
         public string Location { get; set; }
         public List<ISizeMapNode> ShoesSizeMap { get; set; }
+        public string Brand { get; set; }
+        public Gender Gender { get; set; }
         public Resource Resource
         {
             get
             {
                 switch (Regex.Match(Location, Constants.REGEX_FOR_DOMAIN).Value)
                 {
-                    case Constants.STOCK_URL:
+                    case Constants.GOAT_URL:
                         {
                             return Resource.Goat;
                         }

@@ -28,7 +28,9 @@ namespace ProductSynchronizer.Helpers
                 products.Add(new Product
                 {
                     InternalId = (int)reader["product_id"],
-                    Location = (string)reader["location"]
+                    Location = (string)reader["location"],
+                    Brand = (string)reader["name"],
+                    Gender = (Gender)reader["category_id"]
                 });
             }
 

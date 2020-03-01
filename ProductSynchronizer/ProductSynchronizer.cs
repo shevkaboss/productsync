@@ -14,7 +14,10 @@ namespace ProductSynchronizer
         {
             InitializeComponent();
         }
-
+        public void go()
+        {
+            OnStart(new string[0]);
+        }
         protected override void OnStart(string[] args)
         {
             System.Diagnostics.Debugger.Launch();

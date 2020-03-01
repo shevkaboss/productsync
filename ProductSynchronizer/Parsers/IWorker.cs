@@ -2,6 +2,6 @@
 {
     public interface IWorker
     {
-        void GetSyncedData(Product product);
+        Product GetSyncedData(Product product);
     }
 }
