@@ -5,11 +5,12 @@ namespace ProductSynchronizer.Logger
 {
     public static class Logger
     {
-        public static ILog Log { get; } = LogManager.GetLogger("LOGGER");
+        public static ILog Log { get; private set; }
 
         public static void InitLogger()
         {
             XmlConfigurator.Configure();
+            Log = LogManager.GetLogger("LOGGER");
         }
 
         public static void WriteLog(string msg)

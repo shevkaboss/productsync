@@ -18,7 +18,7 @@ namespace ProductSynchronizer.Helpers
             SizeMap =
                 JsonConvert.DeserializeObject<List<Brand>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
                     @"Config\sizes.json")));
-            var tmp = GetCurrencyMap();
+            CurrencyMap = GetCurrencyMap();
         }
 
         public static Dictionary<string, string> GetSizesMap(Resource resource, string brand, Gender gender)

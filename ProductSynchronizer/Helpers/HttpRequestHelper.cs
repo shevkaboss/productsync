@@ -26,7 +26,7 @@ namespace ProductSynchronizer.Helpers
 
                 Logger.Logger.WriteLog($"Status code: {result.StatusCode} for url: {url}");
 
-                if (result.StatusCode != HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK)
                     return result.Content.ReadAsStringAsync().Result;
                 Logger.Logger.WriteLog($"Status code: {result.StatusCode}, for url: {url}");
 

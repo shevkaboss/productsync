@@ -16,6 +16,7 @@ namespace ProductSynchronizer
         /// </summary>
         static void Main()
         {
+            Logger.Logger.InitLogger();
             var test1 = MapsHelper.GetCurrencyValue(Resource.Goat);
             var products = MySqlHelper.GetProducts();
 

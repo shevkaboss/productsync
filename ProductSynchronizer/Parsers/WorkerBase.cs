@@ -68,8 +68,9 @@ namespace ProductSynchronizer.Parsers
 
             foreach (var sizeMapNode in product.ShoesSizeMap)
             {
-                var price = double.Parse(sizeMapNode.ExternalPrice) * currencyValue;
-                if (price > ConfigHelper.Config.PriceConfig.PriceThreshold * usdCurrencyValue)
+                var externalPrice = sizeMapNode.ExternalPrice.Replace(".", ",");
+                var price = double.Parse(externalPrice) * currencyValue;
+                if (price < ConfigHelper.Config.PriceConfig.PriceThreshold * usdCurrencyValue)
                 {
                     price += ConfigHelper.Config.PriceConfig.BelowThresholdIncreaseUsd * usdCurrencyValue;
                 }
