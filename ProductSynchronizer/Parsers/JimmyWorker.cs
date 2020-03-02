@@ -7,7 +7,7 @@ namespace ProductSynchronizer.Parsers
 {
     public class JimmyWorker : WorkerBase
     {
-        public override List<ISizeMapNode> ParseHtml(string response)
+        protected override List<ISizeMapNode> ParseHtml(string response)
         {
             var jimmyShoesSizeMap = new List<ISizeMapNode>();
 
@@ -25,7 +25,7 @@ namespace ProductSynchronizer.Parsers
                     {
                         Id = sizeVariantsObject["id"].ToObject<string>(),
                         ExternalSize = sizeVariantsObject["public_title"].ToObject<string>(),
-                        Price = price.Insert(price.Length - 2, ".")
+                        ExternalPrice = price.Insert(price.Length - 2, ".")
                     };
 
                     var shoesSizeQuantityString = Regex.Match(response, $"(?<=\\[\'{productId}\'\\]\\[{jimmyShoeContext.Id}\\] = )(.*)(?=;)").Groups[0].Value;

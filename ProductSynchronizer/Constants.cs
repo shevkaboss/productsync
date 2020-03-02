@@ -10,12 +10,14 @@ namespace ProductSynchronizer
         public const string FOOTASYLUM_URL = "https://www.footasylum.com";
         public const string JIMMY_JAZZ_URL = "https://www.jimmyjazz.com";
         public const string REGEX_FOR_DOMAIN = @"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)";
-        public static readonly List<Brand> SizeMap = JsonConvert.DeserializeObject<List<Brand>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), @"Config\sizes.json")));
     }
 
     public static class SqlQueries
     {
-        public const string GET_PRODUCTS_QUERY = "Select p.product_id, p.location, m.name, pc.category_id from oc_product p INNER JOIN oc_manufacturer m on p.manufacturer_id = m.manufacturer_id INNER JOIN oc_product_to_category pc on p.product_id = pc.product_id where location is not null and location != \"\" and pc.category_id in (59,60)";
+        public const string GET_PRODUCTS_QUERY =
+            "Select p.product_id, p.location, m.name, pc.category_id from oc_product p INNER JOIN oc_manufacturer m on p.manufacturer_id = m.manufacturer_id INNER JOIN oc_product_to_category pc on p.product_id = pc.product_id where location is not null and location != \"\" and pc.category_id in (59,60)";
+
+        public const string UPDATE_PRODUCT_QUERY_BASE = "";
     }
 
     public class Brand
@@ -37,4 +39,5 @@ namespace ProductSynchronizer
         public string UK { get; set; }
         public string US { get; set; }
     }
+
 }

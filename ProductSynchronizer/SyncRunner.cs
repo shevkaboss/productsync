@@ -5,7 +5,7 @@ namespace ProductSynchronizer
 {
     public class SyncRunner
     {
-        private readonly object lockStack = new object();
+        private readonly object _lockStack = new object();
         private Stack<Product> Products { get; }
         private IWorker Worker { get; }
 
@@ -19,15 +19,16 @@ namespace ProductSynchronizer
         {
             while (true)
             {
-                Product product = null;
-                lock (lockStack)
+                Product product;
+                lock (_lockStack)
                 {
                     if (Products.Count > 0)
                         product = Products.Pop();
                     else
                         break;
                 }
-                Worker.GetSyncedData(product);
+                var resultProduct = Worker.GetSyncedData(product);
+                Worker.UpdateProductInDb(resultProduct);
             }
         }
 

@@ -9,7 +9,7 @@ namespace ProductSynchronizer.Parsers
     public class GoatWorker : WorkerBase
     {
         private const string VARIANTS_REGEX = "(?<=\"formatted_available_sizes_new_v2\":)(\\[.*shoe_condition\":\"[0-9]\"}\\])(?=,)";
-        public override List<ISizeMapNode> ParseHtml(string response)
+        protected override List<ISizeMapNode> ParseHtml(string response)
         {
             var shoesSizeMap = new List<ISizeMapNode>();
 
@@ -25,7 +25,7 @@ namespace ProductSynchronizer.Parsers
                     var jimmyShoeContext = new ShoeContext()
                     {
                         ExternalSize = sizeVariantsObject["size"].ToObject<string>(),
-                        Price = price.Insert(price.Length - 2, "."),
+                        ExternalPrice = price.Insert(price.Length - 2, "."),
                         Quantity = 999
                     };
                     shoesSizeMap.Add(jimmyShoeContext);

@@ -4,20 +4,15 @@ using System.Collections.Generic;
 
 namespace ProductSynchronizer.Helpers
 {
-    public class MySqlHelper : IDisposable
+    public class MySqlHelper
     {
-        private readonly MySqlConnection myConnection;
-        public MySqlHelper()
+        private static readonly MySqlConnection MyConnection;
+        static MySqlHelper()
         {
-            myConnection = new MySqlConnection("Server=werare.mysql.tools;database=werare_db;UID=werare_db;password=vAaQe4hH");
-            myConnection.Open();
+            MyConnection = new MySqlConnection(ConfigHelper.Config.ConnectionString);
+            MyConnection.Open();
         }
-        private MySqlDataReader GetTypedData(string query)
-        {
-            return ExecuteQuery(query);
-        }
-
-        public IEnumerable<Product> GetProducts()
+        public static IEnumerable<Product> GetProducts()
         {
             var reader = GetTypedData(SqlQueries.GET_PRODUCTS_QUERY);
 
@@ -36,16 +31,23 @@ namespace ProductSynchronizer.Helpers
 
             return products;
         }
-
-        public MySqlDataReader ExecuteQuery(string query)
+        public static void UpdateProduct(Product product)
         {
-            var sqlCommand = new MySqlCommand(query, myConnection);
+            var query = string.Format(SqlQueries.UPDATE_PRODUCT_QUERY_BASE);
+            ExecuteQuery(query);
+        }
+        public static MySqlDataReader ExecuteQuery(string query)
+        {
+            var sqlCommand = new MySqlCommand(query, MyConnection);
             return sqlCommand.ExecuteReader();
         }
-
-        public void Dispose()
+        public static void Dispose()
         {
-            myConnection.Dispose();
+            MyConnection.Dispose();
+        }
+        private static MySqlDataReader GetTypedData(string query)
+        {
+            return ExecuteQuery(query);
         }
     }
 }

@@ -1,65 +1,49 @@
-﻿using ProductSynchronizer.Helpers;
+﻿using System;
+using ProductSynchronizer.Helpers;
 using ProductSynchronizer.Parsers;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
+using Quartz;
+using Quartz.Impl;
 
 namespace ProductSynchronizer
 {
     public partial class ProductSynchronizer : ServiceBase
     {
-        private const int THREADS_PER_RUNNER = 1;
         public ProductSynchronizer()
         {
             InitializeComponent();
         }
-        public void go()
-        {
-            OnStart(new string[0]);
-        }
         protected override void OnStart(string[] args)
         {
-            System.Diagnostics.Debugger.Launch();
-
-            IEnumerable<Product> products;
-
-            using (var sql = new MySqlHelper())
-            {
-                products = sql.GetProducts();
-            }
-
-            var runners = CreateRunners(products);
-
-            StartSynchronization(runners);
+            ScheduleJob();
         }
 
         protected override void OnStop()
         {
         }
 
-        #region private Methods
-        private IEnumerable<SyncRunner> CreateRunners(IEnumerable<Product> products)
+        private static void ScheduleJob()
         {
-            var prodList = products.ToList();
-            return new List<SyncRunner>
-            {
-                new SyncRunner(prodList.Where(x => x.Resource == Resource.JimmyJazz), new JimmyWorker()),
+            var scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
 
-                new SyncRunner(prodList.Where(x => x.Resource == Resource.Goat), new GoatWorker()),
+            scheduler.Start();
 
-                new SyncRunner(prodList.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker())
-            };
+            var job = JobBuilder.Create<SyncJob>().Build();
+
+            var trigger = TriggerBuilder.Create()
+
+                .WithIdentity("SyncJob", "SYNC")
+
+                .WithCronSchedule(ConfigHelper.Config.JobCronConfig)
+
+                .StartNow()
+
+                .Build();
+
+            scheduler.ScheduleJob(job, trigger);
         }
-
-        private void StartSynchronization(IEnumerable<SyncRunner> runners)
-        {
-            foreach (var runner in runners)
-            {
-                for (int i = 0; i < THREADS_PER_RUNNER; i++)
-                    new Thread(() => runner.Run());
-            }
-        }
-        #endregion
     }
 }

@@ -12,7 +12,7 @@ namespace ProductSynchronizer
         Female = 59
     }
     public class Product
-    { 
+    {
         public int InternalId { get; set; }
         public string Location { get; set; }
         public List<ISizeMapNode> ShoesSizeMap { get; set; }

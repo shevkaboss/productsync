@@ -1,0 +1,14 @@
+{
+  "Configuration": {
+    "ThreadsPerResource": 1,
+    "JobCronConfig": "0 30 0 * * ?",
+    "ConnectionString": "Server=werare.mysql.tools;database=werare_db;UID=werare_db;password=vAaQe4hH",
+    "CurrencyApiUrl": "http://api.minfin.com.ua/summary/b32de3d35ae88ee28fbecad65c194b5cbce41e68/",
+    "PriceConfig": {
+      "PriceThreshold": 100,
+      "BelowThresholdIncreaseUsd": 40,
+      "OverThresholdIncreaseUsd": 20,
+      "OverThresholdIncreasePercentage": 120
+    } 
+  }
+}

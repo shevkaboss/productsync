@@ -15,7 +15,7 @@ namespace ProductSynchronizer.Parsers
         private const string VARIANTS_REGEX_PATTERN = "(?<=variants = )({.*} })";
         #endregion
 
-        public override List<ISizeMapNode> ParseHtml(string response)
+        protected override List<ISizeMapNode> ParseHtml(string response)
         {
             var shoesSizeMap = new List<ISizeMapNode>();
 
@@ -36,7 +36,7 @@ namespace ProductSynchronizer.Parsers
                         var jimmyShoeContext = new ShoeContext()
                         {
                             ExternalSize = sizeVariantsObject["option2"].ToString(),
-                            Price = sizeVariantsObject["price"].ToString().Replace("£", ""),
+                            ExternalPrice = sizeVariantsObject["price"].ToString().Replace("£", ""),
                             Quantity = sizeVariantsObject["stock_status"].ToString() == IN_STOCK_TEXT ?
                           999 : 0
                         };

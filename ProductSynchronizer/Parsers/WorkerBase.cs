@@ -1,5 +1,7 @@
-﻿using ProductSynchronizer.Helpers;
+﻿using System;
+using ProductSynchronizer.Helpers;
 using System.Collections.Generic;
+using System.Globalization;
 using ProductSynchronizer.Entities;
 using System.Linq;
 
@@ -7,43 +9,72 @@ namespace ProductSynchronizer.Parsers
 {
     public abstract class WorkerBase : IWorker
     {
+        public Product GetSyncedData(Product product)
+        {
+            try
+            {
+                if (product == null || string.IsNullOrEmpty(product.Location) || string.IsNullOrEmpty(product.Brand))
+                {
+                    return null;
+                }
+
+                var response = GetResponse(product.Location);
+
+                product.ShoesSizeMap = ParseHtml(response);
+
+                UpdateSizes(product);
+
+                UpdatePrice(product);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return product;
+        }
+
+        public void UpdateProductInDb(Product product)
+        {
+            if (product != null)
+                MySqlHelper.UpdateProduct(product);
+        }
+
         protected string GetResponse(string url)
         {
             return HttpRequestHelper.PerformGetRequest(url);
         }
-        public abstract List<ISizeMapNode> ParseHtml(string response);
-        public Product SyncSizesUnits(Product product)
+
+        protected abstract List<ISizeMapNode> ParseHtml(string response);
+
+        private static void UpdateSizes(Product product)
         {
+            var sizeMap = MapsHelper.GetSizesMap(product.Resource, product.Brand, product.Gender);
             foreach (var size in product.ShoesSizeMap)
             {
-                var mapNode = Constants.SizeMap
-                    .First(x => x.Name == product.Brand).MapsByGender
-                    .First(x => x.Gender == product.Gender).MapNodes;
-                switch (product.Resource)
-                {
-                    case (Resource.Footasylum):
-                        size.InternalSize = mapNode.First(x => x.UK == size.ExternalSize).EU;
-                        break;
-                    case (Resource.Goat):
-                    case (Resource.JimmyJazz):
-                        size.InternalSize = mapNode.First(x => x.US == size.ExternalSize).EU;
-                        break;
-                }
+                size.InternalSize = sizeMap[size.ExternalSize];
             }
-            return product;
         }
-        public Product GetSyncedData(Product product)
+
+        private static void UpdatePrice(Product product)
         {
-            if (product == null || string.IsNullOrEmpty(product.Location) || string.IsNullOrEmpty(product.Brand))
-                return null;
+            var currencyValue = MapsHelper.GetCurrencyValue(product.Resource);
+            var usdCurrencyValue = MapsHelper.GetCurrencyValue(Currency.USD);
+            foreach (var sizeMapNode in product.ShoesSizeMap)
+            {
+                var price = double.Parse(sizeMapNode.ExternalPrice) * currencyValue;
+                if (price > ConfigHelper.Config.PriceConfig.PriceThreshold * usdCurrencyValue)
+                {
+                    price += ConfigHelper.Config.PriceConfig.BelowThresholdIncreaseUsd * usdCurrencyValue;
+                }
+                else
+                {
+                    price = (price * ConfigHelper.Config.PriceConfig.OverThresholdIncreasePercentage / 100) +
+                            (ConfigHelper.Config.PriceConfig.OverThresholdIncreaseUsd * usdCurrencyValue);
+                }
 
-            var response = GetResponse(product.Location);
-
-            product.ShoesSizeMap = ParseHtml(response);
-
-            SyncSizesUnits(product);
-
-            return product;
+                sizeMapNode.InternalPrice = price.ToString(CultureInfo.InvariantCulture);
+            }
         }
     }
 }

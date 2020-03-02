@@ -16,12 +16,8 @@ namespace ProductSynchronizer
         /// </summary>
         static void Main()
         {
-            IEnumerable<Product> products;
-            var testttt = Constants.SizeMap;
-            using (var sql = new MySqlHelper())
-            {
-                products = sql.GetProducts();
-            }
+            var test1 = MapsHelper.GetCurrencyValue(Resource.Goat);
+            var products = MySqlHelper.GetProducts();
 
             var test = new GoatWorker();
             var prod = products.First(x => x.Location.Contains("goat"));
