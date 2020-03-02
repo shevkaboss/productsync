@@ -1,12 +1,8 @@
-﻿using System;
-using ProductSynchronizer.Helpers;
-using ProductSynchronizer.Parsers;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Threading;
+﻿using ProductSynchronizer.Helpers;
 using Quartz;
 using Quartz.Impl;
+using System.ServiceProcess;
+using Log = ProductSynchronizer.Logger.Logger;
 
 namespace ProductSynchronizer
 {
@@ -18,6 +14,8 @@ namespace ProductSynchronizer
         }
         protected override void OnStart(string[] args)
         {
+            Log.InitLogger();
+            Log.WriteLog("Service started.");
             ScheduleJob();
         }
 
@@ -27,6 +25,7 @@ namespace ProductSynchronizer
 
         private static void ScheduleJob()
         {
+            Log.WriteLog("Scheduling job.");
             var scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
 
             scheduler.Start();
@@ -38,12 +37,13 @@ namespace ProductSynchronizer
                 .WithIdentity("SyncJob", "SYNC")
 
                 .WithCronSchedule(ConfigHelper.Config.JobCronConfig)
-
+#if DEBUG
                 .StartNow()
-
+#endif
                 .Build();
 
             scheduler.ScheduleJob(job, trigger);
+            Log.WriteLog("Job successfully scheduled");
         }
     }
 }

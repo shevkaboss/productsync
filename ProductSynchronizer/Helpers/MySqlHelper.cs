@@ -14,7 +14,7 @@ namespace ProductSynchronizer.Helpers
         }
         public static IEnumerable<Product> GetProducts()
         {
-            var reader = GetTypedData(SqlQueries.GET_PRODUCTS_QUERY);
+            var reader = ExecuteQuery(SqlQueries.GET_PRODUCTS_QUERY);
 
             var products = new List<Product>();
 
@@ -38,16 +38,13 @@ namespace ProductSynchronizer.Helpers
         }
         public static MySqlDataReader ExecuteQuery(string query)
         {
+            Logger.Logger.WriteLog($"Executing query {query}");
             var sqlCommand = new MySqlCommand(query, MyConnection);
             return sqlCommand.ExecuteReader();
         }
         public static void Dispose()
         {
             MyConnection.Dispose();
-        }
-        private static MySqlDataReader GetTypedData(string query)
-        {
-            return ExecuteQuery(query);
         }
     }
 }

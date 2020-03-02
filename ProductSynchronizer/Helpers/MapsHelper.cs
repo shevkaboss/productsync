@@ -18,7 +18,7 @@ namespace ProductSynchronizer.Helpers
             SizeMap =
                 JsonConvert.DeserializeObject<List<Brand>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
                     @"Config\sizes.json")));
-            CurrencyMap = GetCurrencyMap();
+            var tmp = GetCurrencyMap();
         }
 
         public static Dictionary<string, string> GetSizesMap(Resource resource, string brand, Gender gender)
@@ -66,6 +66,12 @@ namespace ProductSynchronizer.Helpers
             var response = HttpRequestHelper.PerformGetRequest(
                 ConfigHelper.Config.CurrencyApiUrl);
 
+            if (response == null)
+            {
+                Logger.Logger.WriteLog($"Currency request response is null");
+                return result;
+            }
+
             var obj = JObject.Parse(response);
 
             foreach (var child in obj.Children().Children())
@@ -77,6 +83,8 @@ namespace ProductSynchronizer.Helpers
                     result.Add(currency, currencyValue);
                 }
             }
+
+            Logger.Logger.WriteLog($"Currency map is: {JsonConvert.SerializeObject(result)}");
 
             return result;
         }

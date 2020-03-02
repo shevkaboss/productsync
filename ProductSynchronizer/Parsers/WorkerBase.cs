@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using ProductSynchronizer.Entities;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace ProductSynchronizer.Parsers
 {
@@ -11,25 +12,27 @@ namespace ProductSynchronizer.Parsers
     {
         public Product GetSyncedData(Product product)
         {
-            try
+            if (product == null || string.IsNullOrEmpty(product.Location) || string.IsNullOrEmpty(product.Brand))
             {
-                if (product == null || string.IsNullOrEmpty(product.Location) || string.IsNullOrEmpty(product.Brand))
-                {
-                    return null;
-                }
-
-                var response = GetResponse(product.Location);
-
-                product.ShoesSizeMap = ParseHtml(response);
-
-                UpdateSizes(product);
-
-                UpdatePrice(product);
+                return null;
             }
-            catch
-            {
-                // ignored
-            }
+
+            var response = GetResponse(product.Location);
+
+            product.ShoesSizeMap = ParseHtml(response);
+
+            Logger.Logger.WriteLog(
+                $"Synced sizes before convert: [Id - {product.InternalId}], {JsonConvert.SerializeObject(product.ShoesSizeMap)}");
+
+            UpdateSizes(product);
+
+            Logger.Logger.WriteLog(
+                $"Synced sizes after convert: [Id - {product.InternalId}], {JsonConvert.SerializeObject(product.ShoesSizeMap)}");
+
+            UpdatePrice(product);
+
+            Logger.Logger.WriteLog(
+                $"After price updating: [Id - {product.InternalId}], {JsonConvert.SerializeObject(product.ShoesSizeMap)}");
 
             return product;
         }
@@ -49,6 +52,8 @@ namespace ProductSynchronizer.Parsers
 
         private static void UpdateSizes(Product product)
         {
+            Logger.Logger.WriteLog(
+                $"Getting size map for: [Resource - {product.Resource}], [Brand - {product.Brand}], [Gender - {product.Gender.ToString()}]");
             var sizeMap = MapsHelper.GetSizesMap(product.Resource, product.Brand, product.Gender);
             foreach (var size in product.ShoesSizeMap)
             {
@@ -60,6 +65,7 @@ namespace ProductSynchronizer.Parsers
         {
             var currencyValue = MapsHelper.GetCurrencyValue(product.Resource);
             var usdCurrencyValue = MapsHelper.GetCurrencyValue(Currency.USD);
+
             foreach (var sizeMapNode in product.ShoesSizeMap)
             {
                 var price = double.Parse(sizeMapNode.ExternalPrice) * currencyValue;

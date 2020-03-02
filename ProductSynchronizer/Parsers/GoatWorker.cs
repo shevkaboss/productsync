@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using ProductSynchronizer.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using ProductSynchronizer.Entities;
 
 namespace ProductSynchronizer.Parsers
 {
@@ -31,8 +31,9 @@ namespace ProductSynchronizer.Parsers
                     shoesSizeMap.Add(jimmyShoeContext);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Logger.WriteLog($"Error parsing html: {e.Message}");
             }
 
             return shoesSizeMap;
