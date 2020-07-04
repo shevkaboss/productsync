@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
+using ProductSynchronizer.Logger;
+using ProductSynchronizer.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace ProductSynchronizer.Parsers
@@ -12,34 +15,28 @@ namespace ProductSynchronizer.Parsers
         {
             var jimmyShoesSizeMap = new List<ISizeMapNode>();
 
-            try
+            var json = Regex.Match(response, "(?<=var meta =)(.*}})(?=;)").Groups[0].Value;
+
+            var sizesContainer = JObject.Parse(json);
+
+            var productId = sizesContainer["product"]["id"].ToObject<string>();
+
+            foreach (var sizeVariantsObject in sizesContainer["product"]["variants"].AsJEnumerable())
             {
-                var sizesContainer = JObject.Parse(Regex.Match(response, "(?<=var meta =)(.*}})(?=;)").Groups[0].Value);
-
-                var productId = sizesContainer["product"]["id"].ToObject<string>();
-
-
-                foreach (var sizeVariantsObject in sizesContainer["product"]["variants"].ToObject<List<JObject>>())
+                var price = sizeVariantsObject["price"].ToObject<string>();
+                var jimmyShoeContext = new JimmyShoeContext
                 {
-                    var price = sizeVariantsObject["price"].ToObject<string>();
-                    var jimmyShoeContext = new JimmyShoeContext
-                    {
-                        Id = sizeVariantsObject["id"].ToObject<string>(),
-                        ExternalSize = sizeVariantsObject["public_title"].ToObject<string>(),
-                        ExternalPrice = price.Insert(price.Length - 2, ".")
-                    };
+                    Id = sizeVariantsObject["id"].ToObject<string>(),
+                    ExternalSize = sizeVariantsObject["public_title"].ToObject<double>(),
+                    ExternalPrice = double.Parse(price.Insert(price.Length - 2, "."), CultureInfo.InvariantCulture)
+                };
 
-                    var shoesSizeQuantityString = Regex.Match(response, $"(?<=\\[\'{productId}\'\\]\\[{jimmyShoeContext.Id}\\] = )(.*)(?=;)").Groups[0].Value;
+                var shoesSizeQuantityString = Regex.Match(response, $"(?<=\\[\'{productId}\'\\]\\[{jimmyShoeContext.Id}\\] = )(.*)(?=;)").Groups[0].Value;
 
-                    if (int.TryParse(shoesSizeQuantityString, out var shoesSizeQuantity))
-                        jimmyShoeContext.Quantity = shoesSizeQuantity;
+                if (int.TryParse(shoesSizeQuantityString, out var shoesSizeQuantity))
+                    jimmyShoeContext.Quantity = shoesSizeQuantity;
 
-                    jimmyShoesSizeMap.Add(jimmyShoeContext);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Logger.WriteLog($"Error parsing html: {e.Message}");
+                jimmyShoesSizeMap.Add(jimmyShoeContext);
             }
 
             return jimmyShoesSizeMap;

@@ -14,6 +14,8 @@ namespace ProductSynchronizer
     public class Product
     {
         public int InternalId { get; set; }
+        public int ProductOptionId { get; set; }
+        public double CommonPrice { get; set; } = -1;
         public string Location { get; set; }
         public List<ISizeMapNode> ShoesSizeMap { get; set; }
         public string Brand { get; set; }

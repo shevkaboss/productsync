@@ -1,48 +1,55 @@
 ﻿using ProductSynchronizer.Helpers;
+using ProductSynchronizer.Logger;
 using Quartz;
 using Quartz.Impl;
+using System;
 using System.ServiceProcess;
-using Log = ProductSynchronizer.Logger.Logger;
+using System.Threading.Tasks;
 
 namespace ProductSynchronizer
 {
     public partial class ProductSynchronizer : ServiceBase
     {
+        static IScheduler _scheduler;
         public ProductSynchronizer()
         {
             InitializeComponent();
         }
         protected override void OnStart(string[] args)
         {
-            Log.InitLogger();
             Log.WriteLog("Service started.");
-            ScheduleJob();
+            ScheduleJob().GetAwaiter().GetResult();
         }
 
         protected override void OnStop()
         {
         }
 
-        private static void ScheduleJob()
+        private static async Task ScheduleJob()
         {
             Log.WriteLog("Scheduling job.");
-            var scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
+            _scheduler = await StdSchedulerFactory.GetDefaultScheduler();
 
-            scheduler.Start();
-
-            var job = JobBuilder.Create<SyncJob>().Build();
+            var job = JobBuilder.Create<SyncJob>()
+                .WithIdentity("myJob", "SYNC")
+                .Build();
 
             var trigger = TriggerBuilder.Create()
 
                 .WithIdentity("SyncJob", "SYNC")
 
-                .WithCronSchedule(ConfigHelper.Config.JobCronConfig)
-#if DEBUG
                 .StartNow()
-#endif
+
+                .WithCronSchedule(ConfigHelper.Config.JobCronConfig)
+
                 .Build();
 
-            scheduler.ScheduleJob(job, trigger);
+            await _scheduler.ScheduleJob(job, trigger);
+
+            await _scheduler.TriggerJob(job.Key);
+
+            await _scheduler.Start();
+
             Log.WriteLog("Job successfully scheduled");
         }
     }

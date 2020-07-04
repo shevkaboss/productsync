@@ -1,64 +1,85 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
+using ProductSynchronizer.Logger;
+using ProductSynchronizer.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace ProductSynchronizer.Helpers
 {
     public static class MapsHelper
     {
         private static readonly List<Brand> SizeMap;
-
         private static readonly Dictionary<Currency, double> CurrencyMap;
+        private static readonly Dictionary<int, double> SizesDbMap;
         static MapsHelper()
         {
-            SizeMap =
-                JsonConvert.DeserializeObject<List<Brand>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(),
-                    @"Config\sizes.json")));
-            CurrencyMap = GetCurrencyMap();
-        }
+            var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigHelper.SizesConfigFilePath);
 
-        public static Dictionary<string, string> GetSizesMap(Resource resource, string brand, Gender gender)
+            SizeMap =
+                JsonConvert.DeserializeObject<List<Brand>>(File.ReadAllText(configFilePath));
+            CurrencyMap = GetCurrencyMap();
+            SizesDbMap = MySqlHelper.GetDbSizesMap();
+        }
+        public static Dictionary<double, double> GetSizesMap(Resource resource, string brand, Gender gender)
         {
-            var mapNode = SizeMap
-                .First(x => x.Name == brand).MapsByGender
-                .First(x => x.Gender == gender).MapNodes;
+            MapNode[] mapNode = null;
+            try
+            {
+                mapNode = SizeMap
+                    .First(x => x.Name.Split(new string[] { "||" }, StringSplitOptions.None).Contains(brand)).MapsByGender
+                    .First(x => x.Gender == gender).MapNodes;
+            }
+            catch
+            {
+                throw new InnerException($"Size map for brand [{brand}] is not defined");
+            }
 
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-            switch (resource)
+
+            try
             {
-                case Resource.Footasylum:
-                    return mapNode.ToDictionary(mn => mn.UK, mn => mn.EU);
-                case Resource.Goat:
-                case Resource.JimmyJazz:
-                    return mapNode.ToDictionary(mn => mn.US, mn => mn.EU);
-                default:
-                    return null;
+                switch (resource)
+                {
+                    case Resource.Footasylum:
+                        return mapNode.ToDictionary(mn => mn.UK, mn => mn.EU);
+                    case Resource.Goat:
+                    case Resource.JimmyJazz:
+                        return mapNode.ToDictionary(mn => mn.US, mn => mn.EU);
+                    default:
+                        return null;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new InnerException($"Failed to create Sizes Map from sizes.json, error: {e.Message}");
             }
         }
-
         public static double GetCurrencyValue(Resource resource)
         {
             switch (resource)
             {
-                case Resource.Footasylum:
-                    return CurrencyMap[Currency.USD];
                 case Resource.Goat:
-                case Resource.JimmyJazz:
+                case Resource.JimmyJazz:            
+                    return CurrencyMap[Currency.USD];
+                case Resource.Footasylum:
                     return CurrencyMap[Currency.GBP];
                 default:
                     return -1;
             }
         }
-
         public static double GetCurrencyValue(Currency currency)
         {
             return CurrencyMap[currency];
         }
-
+        public static int GetSizeDbId(double size)
+        {
+            return SizesDbMap.FirstOrDefault(x => x.Value == size).Key;
+        }
         private static Dictionary<Currency, double> GetCurrencyMap()
         {
             var result = new Dictionary<Currency, double>();
@@ -68,7 +89,7 @@ namespace ProductSynchronizer.Helpers
 
             if (response == null)
             {
-                Logger.Logger.WriteLog($"Currency request response is null");
+                Log.WriteLog($"Currency request response is null");
                 return result;
             }
 
@@ -84,7 +105,7 @@ namespace ProductSynchronizer.Helpers
                 }
             }
 
-            Logger.Logger.WriteLog($"Currency map is: {JsonConvert.SerializeObject(result)}");
+            Log.WriteLog($"Currency map is: {JsonConvert.SerializeObject(result)}");
 
             return result;
         }

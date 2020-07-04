@@ -2,6 +2,9 @@
 using ProductSynchronizer.Parsers;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using ProductSynchronizer.Logger;
+using ProductSynchronizer.Utils;
+using System.Threading.Tasks;
 
 namespace ProductSynchronizer
 {
@@ -10,7 +13,7 @@ namespace ProductSynchronizer
         private readonly object _lockStack = new object();
         private Stack<Product> Products { get; }
         private IWorker Worker { get; }
-        private string _workerType;
+        private readonly string _workerType;
 
         public SyncRunner(IEnumerable<Product> products, IWorker worker)
         {
@@ -29,7 +32,7 @@ namespace ProductSynchronizer
 
                     lock (_lockStack)
                     {
-                        Logger.Logger.WriteLog($"{_workerType} stack length {Products.Count}");
+                        Log.WriteLog($"{_workerType} stack length {Products.Count}");
                         if (Products.Count > 0)
                         {
                             product = Products.Pop();
@@ -40,28 +43,39 @@ namespace ProductSynchronizer
                 }
                 catch (Exception e)
                 {
-                    Logger.Logger.WriteLog($"Error while POPing data from stack: {e.Message}");
+                    Log.WriteLog($"Error while POPing data from stack: {e.Message}");
                     continue;
                 }
 
-
-                Logger.Logger.WriteLog($"Starting sync for product: {JsonConvert.SerializeObject(product)}");
+                Log.WriteLog($"Starting sync for product: {JsonConvert.SerializeObject(product)}");
 
                 Product resultProduct;
 
                 try
                 {
                     resultProduct = Worker.GetSyncedData(product);
+
+                    if (resultProduct == null)
+                    {
+                        Log.WriteLog($"Synced product reference is null.");
+                        throw new Exception("Synced product reference is null.");
+                    }
+
+                    Worker.UpdateProductInDb(product);
+                    Log.WriteLog($"Updated product: {JsonConvert.SerializeObject(product)}");
+                }
+                catch (InnerException e)
+                {
+                    UnsuccessfulItemsHandler.AddError(e.Error);
+                    Log.WriteLog($"Inner error while syncing data: {e.Message} {Environment.NewLine} Stack trace: {e.StackTrace}");
+                    continue;
                 }
                 catch (Exception e)
                 {
-                    Logger.Logger.WriteLog($"Error while syncing data: {e.Message}");
+                    UnsuccessfulItemsHandler.AddUnsuccessfulProduct(product.InternalId, "Unknown exception thrown");
+                    Log.WriteLog($"Unknown error while sync data: {e.Message} {Environment.NewLine} Stack trace: {e.StackTrace}");
                     continue;
                 }
-
-                Logger.Logger.WriteLog($"Updated product: {JsonConvert.SerializeObject(product)}");
-
-                Worker.UpdateProductInDb(resultProduct);
             }
         }
 

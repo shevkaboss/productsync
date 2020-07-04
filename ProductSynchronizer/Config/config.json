@@ -1,7 +1,7 @@
 {
   "Configuration": {
     "ThreadsPerResource": 1,
-    "JobCronConfig": "0 30 0 * * ?",
+    "JobCronConfig": "0 30 0 * * ?", //"0 * * ? * * *", 
     "ConnectionString": "Server=werare.mysql.tools;database=werare_db;UID=werare_db;password=vAaQe4hH",
     "CurrencyApiUrl": "http://api.minfin.com.ua/summary/b32de3d35ae88ee28fbecad65c194b5cbce41e68/",
     "PriceConfig": {
@@ -9,6 +9,12 @@
       "BelowThresholdIncreaseUsd": 40,
       "OverThresholdIncreaseUsd": 20,
       "OverThresholdIncreasePercentage": 120
-    } 
+    },
+    "EmailConfig": {
+      "ResultLogMailReciever": "vadimshevchenko20@gmail.com",
+      "ResultLogMailSenderMail": "productsynresult@gmail.com",
+      "ResultLogMailSenderPass": "ProdSync123",
+      "ResultLogMailCC": "rezinilya@gmail.com"
+    }
   }
 }

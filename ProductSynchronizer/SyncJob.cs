@@ -1,5 +1,7 @@
 ﻿using ProductSynchronizer.Helpers;
+using ProductSynchronizer.Logger;
 using ProductSynchronizer.Parsers;
+using ProductSynchronizer.Utils;
 using Quartz;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,14 +13,20 @@ namespace ProductSynchronizer
 {
     public class SyncJob : IJob
     {
-        private const int THREADS_PER_RUNNER = 1;
-
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            return new Task(() =>
+            await Task.Run(() =>
             {
-                //Debugger.Launch();
-                var products = MySqlHelper.GetProducts();
+                Debugger.Launch();
+                Log.WriteLog("Creating runners");
+
+                var products = MySqlHelper.GetProducts();//.Where(x => x.Location.Contains("footasy")).Take(5);
+
+                var productIds = products.Select(x => x.InternalId.ToString());
+
+                Log.WriteLog($"Running sync job for products: {string.Join(", ", productIds)}");
+
+                MySqlHelper.UpdateProductsOnStart(productIds);
 
                 var runners = CreateRunners(products);
 
@@ -46,11 +54,14 @@ namespace ProductSynchronizer
 
             try
             {
+                Stopwatch sw = Stopwatch.StartNew();
+
                 foreach (var runner in runners)
                 {
                     for (var i = 0; i < ConfigHelper.Config.ThreadsPerResource; i++)
                     {
                         var thread = new Thread(() => runner.Run());
+                        thread.Start();
                         threads.Add(thread);
                     }
                 }
@@ -59,10 +70,15 @@ namespace ProductSynchronizer
                 {
                     thread.Join();
                 }
+                sw.Stop();
+
+                Log.ResultLog(sw.Elapsed.ToString(), UnsuccessfulItemsHandler.GetErrors());
+
+                MySqlHelper.UpdateUnsuccessfulProducts(UnsuccessfulItemsHandler.GetUnsuccessfulProductIdsToUpdate());
             }
-            finally
+            catch
             {
-                MySqlHelper.Dispose();
+                Log.WriteLog("Unknown error when running syncers");
             }
         }
         #endregion

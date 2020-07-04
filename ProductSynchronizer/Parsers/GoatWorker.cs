@@ -1,42 +1,44 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace ProductSynchronizer.Parsers
 {
     public class GoatWorker : WorkerBase
     {
-        private const string VARIANTS_REGEX = "(?<=\"formatted_available_sizes_new_v2\":)(\\[.*shoe_condition\":\"[0-9]\"}\\])(?=,)";
+        #region constants
+        private const string GOAT_GET_SNEAKERS_NAME_REGEX = "(?<=sneakers\\/)(.*)";
+        private const string GOAT_API_URL = "https://www.goat.com/web-api/v1/product_variants?productTemplateId=";
+        #endregion
         protected override List<ISizeMapNode> ParseHtml(string response)
         {
             var shoesSizeMap = new List<ISizeMapNode>();
 
-            try
-            {
-                var regex = Regex
-                    .Match(response, VARIANTS_REGEX).Groups[0].Value;
-                var sizesContainer = JArray.Parse(regex);
+            var sizesContainer = JArray.Parse(response);
 
-                foreach (var sizeVariantsObject in sizesContainer)
-                {
-                    var price = sizeVariantsObject["price_cents"].ToObject<string>();
-                    var jimmyShoeContext = new ShoeContext()
-                    {
-                        ExternalSize = sizeVariantsObject["size"].ToObject<string>(),
-                        ExternalPrice = price.Insert(price.Length - 2, "."),
-                        Quantity = 999
-                    };
-                    shoesSizeMap.Add(jimmyShoeContext);
-                }
-            }
-            catch (Exception e)
+            foreach (var sizeNode in sizesContainer)
             {
-                Logger.Logger.WriteLog($"Error parsing html: {e.Message}");
+                var price = sizeNode["lowestPriceCents"]["amount"].ToObject<string>();
+                var shoeContext = new ShoeContext()
+                {
+                    ExternalSize = sizeNode["size"].ToObject<double>(),
+                    ExternalPrice = double.Parse(price.Substring(0, price.Length - 2), CultureInfo.InvariantCulture),
+                    Quantity = 999
+                };
+
+                shoesSizeMap.Add(shoeContext);
             }
 
             return shoesSizeMap;
+        }
+
+        protected override void UpdateProductLocation(Product product)
+        {
+            var sneakersName = Regex.Match(product.Location, GOAT_GET_SNEAKERS_NAME_REGEX);
+            product.Location = GOAT_API_URL + sneakersName;
         }
     }
 }

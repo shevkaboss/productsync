@@ -6,6 +6,8 @@ namespace ProductSynchronizer.Helpers
     public static class ConfigHelper
     {
         public static Configuration Config = new Configuration();
+        public static string SizesConfigFilePath = @"Config\sizes.json";
+        public static string ResultLogFilePath = @"Logs\ResultLog.log";
 
         static ConfigHelper()
         {
@@ -23,6 +25,7 @@ namespace ProductSynchronizer.Helpers
         public string ConnectionString { get; set; }
         public string CurrencyApiUrl { get; set; }
         public PriceConfig PriceConfig { get; set; }
+        public EmailConfig EmailConfig { get; set; }
     }
 
     public class PriceConfig
@@ -31,5 +34,13 @@ namespace ProductSynchronizer.Helpers
         public int BelowThresholdIncreaseUsd { get; set; }
         public int OverThresholdIncreaseUsd { get; set; }
         public int OverThresholdIncreasePercentage { get; set; }
+    }
+
+    public class EmailConfig
+    {
+        public string ResultLogMailReciever { get; set; }
+        public string ResultLogMailSenderMail { get; set; }
+        public string ResultLogMailSenderPass { get; set; }
+        public string ResultLogMailCC { get; set; }
     }
 }
