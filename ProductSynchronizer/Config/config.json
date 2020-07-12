@@ -15,6 +15,13 @@
       "ResultLogMailSenderMail": "productsynresult@gmail.com",
       "ResultLogMailSenderPass": "ProdSync123",
       "ResultLogMailCC": "rezinilya@gmail.com"
-    }
+    },
+    "ProxiesConfig": [
+      {
+        "ProxyIpPort": "193.22.99.44:8000",
+        "Login": "DCJ7TB",
+        "Password": "UjVEsm"
+      }
+    ]
   }
 }

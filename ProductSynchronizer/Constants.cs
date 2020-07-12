@@ -9,6 +9,8 @@ namespace ProductSynchronizer
         public const string GOAT_URL = "https://www.goat.com";
         public const string FOOTASYLUM_URL = "https://www.footasylum.com";
         public const string JIMMY_JAZZ_URL = "https://www.jimmyjazz.com";
+        public const string STOCKX_URL = "https://www.stockx.com";
+        public const string SIVASDESCALZO_URL = "https://sivasdescalzo.com";
         public const string REGEX_FOR_DOMAIN = @"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/?\n]+)";
     }
 

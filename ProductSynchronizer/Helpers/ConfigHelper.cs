@@ -26,6 +26,7 @@ namespace ProductSynchronizer.Helpers
         public string CurrencyApiUrl { get; set; }
         public PriceConfig PriceConfig { get; set; }
         public EmailConfig EmailConfig { get; set; }
+        public IEnumerable<ProxyConfig> ProxiesConfig { get; set; }
     }
 
     public class PriceConfig
@@ -42,5 +43,12 @@ namespace ProductSynchronizer.Helpers
         public string ResultLogMailSenderMail { get; set; }
         public string ResultLogMailSenderPass { get; set; }
         public string ResultLogMailCC { get; set; }
+    }
+
+    public class ProxyConfig
+    {
+        public string ProxyIpPort { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace ProductSynchronizer.Entities
     public enum Currency
     {
         USD,
-        GBP
+        GBP,
+        EUR
     }
 }

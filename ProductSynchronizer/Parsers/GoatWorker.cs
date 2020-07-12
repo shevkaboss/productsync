@@ -9,6 +9,10 @@ namespace ProductSynchronizer.Parsers
 {
     public class GoatWorker : WorkerBase
     {
+        public GoatWorker():base(true)
+        {
+
+        }
         #region constants
         private const string GOAT_GET_SNEAKERS_NAME_REGEX = "(?<=sneakers\\/)(.*)";
         private const string GOAT_API_URL = "https://www.goat.com/web-api/v1/product_variants?productTemplateId=";

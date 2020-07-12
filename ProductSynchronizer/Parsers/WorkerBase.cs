@@ -13,6 +13,11 @@ namespace ProductSynchronizer.Parsers
 {
     public abstract class WorkerBase : IWorker
     {
+        private HttpRequestHelper _httpHelper;
+        public WorkerBase(bool withProxy = false)
+        {
+            _httpHelper = new HttpRequestHelper(withProxy);
+        }
         public Product GetSyncedData(Product product)
         {
             if (string.IsNullOrEmpty(product.Location) || string.IsNullOrEmpty(product.Brand))
@@ -101,7 +106,7 @@ namespace ProductSynchronizer.Parsers
         }
         protected string GetResponse(string url)
         {
-            return HttpRequestHelper.PerformGetRequest(url);
+            return _httpHelper.PerformGetRequest(url);
         }
         protected abstract List<ISizeMapNode> ParseHtml(string response);
         protected virtual void UpdateProductLocation(Product product)

@@ -5,7 +5,6 @@ using ProductSynchronizer.Logger;
 using ProductSynchronizer.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -49,6 +48,8 @@ namespace ProductSynchronizer.Helpers
                         return mapNode.ToDictionary(mn => mn.UK, mn => mn.EU);
                     case Resource.Goat:
                     case Resource.JimmyJazz:
+                    case Resource.Sivasdescalzo:
+                    case Resource.StockX:
                         return mapNode.ToDictionary(mn => mn.US, mn => mn.EU);
                     default:
                         return null;
@@ -64,10 +65,13 @@ namespace ProductSynchronizer.Helpers
             switch (resource)
             {
                 case Resource.Goat:
-                case Resource.JimmyJazz:            
+                case Resource.JimmyJazz:
+                case Resource.StockX:
                     return CurrencyMap[Currency.USD];
                 case Resource.Footasylum:
                     return CurrencyMap[Currency.GBP];
+                case Resource.Sivasdescalzo:
+                    return CurrencyMap[Currency.EUR];
                 default:
                     return -1;
             }
@@ -84,7 +88,7 @@ namespace ProductSynchronizer.Helpers
         {
             var result = new Dictionary<Currency, double>();
 
-            var response = HttpRequestHelper.PerformGetRequest(
+            var response = HttpRequestHelper.PerformGetRequestStatic(
                 ConfigHelper.Config.CurrencyApiUrl);
 
             if (response == null)

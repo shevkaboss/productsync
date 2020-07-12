@@ -5,6 +5,8 @@
         Goat,
         Footasylum,
         JimmyJazz,
+        StockX,
+        Sivasdescalzo,
         Udentified
     }
 

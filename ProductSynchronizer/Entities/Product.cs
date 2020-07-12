@@ -38,6 +38,14 @@ namespace ProductSynchronizer
                         {
                             return Resource.JimmyJazz;
                         }
+                    case Constants.STOCKX_URL:
+                        {
+                            return Resource.StockX;
+                        }
+                    case Constants.SIVASDESCALZO_URL:
+                        {
+                            return Resource.Sivasdescalzo;
+                        }
                     default:
                         {
                             return Resource.Udentified;
