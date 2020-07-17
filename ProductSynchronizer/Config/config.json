@@ -20,7 +20,8 @@
       {
         "ProxyIpPort": "193.22.99.44:8000",
         "Login": "DCJ7TB",
-        "Password": "UjVEsm"
+        "Password": "UjVEsm",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
       }
     ]
   }

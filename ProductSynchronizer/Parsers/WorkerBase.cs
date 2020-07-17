@@ -27,13 +27,16 @@ namespace ProductSynchronizer.Parsers
 
             UpdateProductLocation(product);
 
-            var response = GetResponse(product.Location);
+            string response;
 
-            if (string.IsNullOrEmpty(response))
+            try
             {
-                Debugger.Break();
-                Log.WriteLog($"Response is null for {product.Location}");
-                throw new InnerException(product.InternalId, $"Bad request for url: [{product.Location}]", true);
+                response = GetResponse(product.Location);
+            }
+            catch (Exception e)
+            {
+                Log.WriteLog($"Bad request for {product.Location}");
+                throw new InnerException(product.InternalId, $"Bad request for url: [{product.Location}], {e.Message}", true);
             }
 
             ParseSizesFromResponse(product, response);
@@ -162,7 +165,7 @@ namespace ProductSynchronizer.Parsers
 
             double commonExternalPrice;
 
-            if (product.Resource == Resource.Goat)
+            if (product.Resource == Resource.Goat || product.Resource == Resource.StockX)
             {
 
                 foreach (var sizeMapNode in product.ShoesSizeMap)

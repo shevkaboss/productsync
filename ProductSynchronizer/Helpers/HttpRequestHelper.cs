@@ -9,10 +9,10 @@ namespace ProductSynchronizer.Helpers
 {
     public class HttpRequestHelper
     {
-        private Queue<HttpClient> _httpClients = new Queue<HttpClient>();
+        private Queue<(bool isProxy, HttpClient httpClient, string userAgent)> _httpClients = new Queue<(bool isProxy, HttpClient httpClient, string userAgent)>();
         public HttpRequestHelper(bool withProxy = false)
         {
-            _httpClients.Enqueue(new HttpClient());
+            _httpClients.Enqueue((false, new HttpClient(), "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36"));
 
             if (withProxy)
             {
@@ -35,21 +35,9 @@ namespace ProductSynchronizer.Helpers
                         Proxy = proxy,
                     };
 
-                    //// Omit this part if you don't need to authenticate with the web server:
-                    //if (needServerAuthentication)
-                    //{
-                    //    httpClientHandler.PreAuthenticate = true;
-                    //    httpClientHandler.UseDefaultCredentials = false;
-
-                    //    // *** These creds are given to the web server, not the proxy server ***
-                    //    httpClientHandler.Credentials = new NetworkCredential(
-                    //        userName: serverUserName,
-                    //        password: serverPassword);
-                    //}
-
                     var client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
 
-                    _httpClients.Enqueue(client);
+                    _httpClients.Enqueue((true, client, proxyConfig.UserAgent));
                 }
             }
         }
@@ -62,12 +50,12 @@ namespace ProductSynchronizer.Helpers
             {
                 using (var request = new HttpRequestMessage(new HttpMethod("GET"), url))
                 {
-                    request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36");
+                    var queueClient = _httpClients.Dequeue();
+                    _httpClients.Enqueue(queueClient);
 
-                    var client = _httpClients.Dequeue();
-                    _httpClients.Enqueue(client);
+                    request.Headers.Add("User-Agent", queueClient.userAgent);
 
-                    var response = client.SendAsync(request);
+                    var response = queueClient.httpClient.SendAsync(request);
                     var result = response.Result;
 
                     Log.WriteLog($"Status code: {result.StatusCode}, for url: {url}");
@@ -83,10 +71,8 @@ namespace ProductSynchronizer.Helpers
                             retryCount++;
                             continue;
                         }
-                        return null;
+                        throw new Exception($"isProxy: [{queueClient.isProxy}], user-agent: [{queueClient.userAgent}]");
                     }
-
-
                 }
             }
         }

@@ -50,5 +50,6 @@ namespace ProductSynchronizer.Helpers
         public string ProxyIpPort { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
+        public string UserAgent { get; set; }
     }
 }
