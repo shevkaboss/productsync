@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
+using ProductSynchronizer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +11,10 @@ namespace ProductSynchronizer.Parsers
 {
     public class SivasdescalzoWorker : WorkerBase
     {
+        public SivasdescalzoWorker():base(Resource.Sivasdescalzo, HttpClientVpnType.OnlyProxy)
+        {
+
+        }
         protected override List<ISizeMapNode> ParseHtml(string response)
         {
             //https://www.sivasdescalzo.com/en/sb-zoom-blazer-mid-edge-ci3833-101

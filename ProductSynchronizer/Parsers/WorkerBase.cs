@@ -5,18 +5,16 @@ using ProductSynchronizer.Logger;
 using ProductSynchronizer.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProductSynchronizer.Parsers
 {
     public abstract class WorkerBase : IWorker
     {
         private HttpRequestHelper _httpHelper;
-        public WorkerBase(bool withProxy = false)
+        public WorkerBase(Resource resource, HttpClientVpnType vpnType = HttpClientVpnType.NoProxy)
         {
-            _httpHelper = new HttpRequestHelper(withProxy);
+            _httpHelper = new HttpRequestHelper(resource, vpnType);
         }
         public Product GetSyncedData(Product product)
         {
@@ -175,7 +173,7 @@ namespace ProductSynchronizer.Parsers
                     sizeMapNode.InternalPrice = price;
                 }   
 
-                commonExternalPrice = product.ShoesSizeMap.Min(x => x.ExternalPrice);
+                commonExternalPrice = product.ShoesSizeMap.Where(x => x.Quantity > 0).Min(x => x.ExternalPrice);
             }
             else
             {               

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
+using ProductSynchronizer.Helpers;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -9,7 +9,7 @@ namespace ProductSynchronizer.Parsers
 {
     public class GoatWorker : WorkerBase
     {
-        public GoatWorker():base(true)
+        public GoatWorker():base(Resource.Goat, HttpClientVpnType.MixProxy)
         {
 
         }

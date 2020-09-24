@@ -8,6 +8,10 @@ namespace ProductSynchronizer.Parsers
 {
     public class StockXWorker : WorkerBase
     {
+        public StockXWorker() :base(Resource.StockX)
+        {
+
+        }
         protected override List<ISizeMapNode> ParseHtml(string response)
         {
              //https://stockx.com/nike-air-huarache-drift-black-sail

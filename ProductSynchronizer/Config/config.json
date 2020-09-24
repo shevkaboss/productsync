@@ -3,7 +3,7 @@
     "ThreadsPerResource": 1,
     "JobCronConfig": "0 30 0 * * ?", //"0 * * ? * * *", 
     "ConnectionString": "Server=werare.mysql.tools;database=werare_db;UID=werare_db;password=vAaQe4hH",
-    "CurrencyApiUrl": "http://api.minfin.com.ua/summary/b32de3d35ae88ee28fbecad65c194b5cbce41e68/",
+    "CurrencyApiUrl": "https://api.minfin.com.ua/summary/3011a97a1aea3bc3f08116ae5b0be7eb01201a7f/",
     "PriceConfig": {
       "PriceThreshold": 100,
       "BelowThresholdIncreaseUsd": 40,
@@ -22,6 +22,13 @@
         "Login": "DCJ7TB",
         "Password": "UjVEsm",
         "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+      },
+      {
+        "ProxyIpPort": "45.133.223.179:8000",
+        "Login": "ZCnvDq",
+        "Password": "F2H1B2",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Resource": "Sivasdescalzo"
       }
     ]
   }

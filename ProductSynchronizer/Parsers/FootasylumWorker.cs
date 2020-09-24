@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
-using ProductSynchronizer.Logger;
-using ProductSynchronizer.Utils;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -11,6 +8,10 @@ namespace ProductSynchronizer.Parsers
 {
     public class FootasylumWorker : WorkerBase
     {
+        public FootasylumWorker() : base(Resource.Footasylum)
+        {
+
+        }
         #region constants
         private const string IN_STOCK_TEXT = "in stock";
         private const string URL_REGEX_PATTERN = "(?<=dataLayer = \\[)({.*})(?=\\];)";

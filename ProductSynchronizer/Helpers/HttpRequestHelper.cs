@@ -1,6 +1,7 @@
 ﻿using ProductSynchronizer.Logger;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -9,14 +10,20 @@ namespace ProductSynchronizer.Helpers
 {
     public class HttpRequestHelper
     {
-        private Queue<(bool isProxy, HttpClient httpClient, string userAgent)> _httpClients = new Queue<(bool isProxy, HttpClient httpClient, string userAgent)>();
-        public HttpRequestHelper(bool withProxy = false)
+        private Queue<(bool isProxy, HttpClient httpClient, string userAgent, string ip)> _httpClients = new Queue<(bool isProxy, HttpClient httpClient, string userAgent, string ip)>();
+        public HttpRequestHelper(Resource resource, HttpClientVpnType vpnType = HttpClientVpnType.NoProxy)
         {
-            _httpClients.Enqueue((false, new HttpClient(), "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36"));
+            if (vpnType != HttpClientVpnType.OnlyProxy)
+                _httpClients.Enqueue((false, new HttpClient(), "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36", "serverIP"));
 
-            if (withProxy)
+            if (vpnType != HttpClientVpnType.NoProxy)
             {
-                foreach (var proxyConfig in ConfigHelper.Config.ProxiesConfig)
+                var proxies = ConfigHelper.Config.ProxiesConfig.Where(x => x.Resource.HasValue && x.Resource.Value == resource);
+                if (proxies.Count() == 0){
+                    proxies = ConfigHelper.Config.ProxiesConfig.Where(x => !x.Resource.HasValue);
+                }
+
+                foreach (var proxyConfig in proxies)
                 {
                     var proxy = new WebProxy
                     {
@@ -37,7 +44,7 @@ namespace ProductSynchronizer.Helpers
 
                     var client = new HttpClient(handler: httpClientHandler, disposeHandler: true);
 
-                    _httpClients.Enqueue((true, client, proxyConfig.UserAgent));
+                    _httpClients.Enqueue((true, client, proxyConfig.UserAgent, proxyConfig.ProxyIpPort));
                 }
             }
         }
@@ -66,12 +73,13 @@ namespace ProductSynchronizer.Helpers
                     {
                         if (retryCount == 0 && result.StatusCode == HttpStatusCode.Forbidden)
                         {
-                            Thread.Sleep(15000);
+                            Thread.Sleep(120000);
                             Log.WriteLog($"Retrying Request.");
                             retryCount++;
                             continue;
                         }
-                        throw new Exception($"isProxy: [{queueClient.isProxy}], user-agent: [{queueClient.userAgent}]");
+                        Log.WriteLog($"isProxy: [{queueClient.isProxy}], user-agent: [{queueClient.userAgent}], proxy ip: [{queueClient.ip}], response: [{result.Content?.ReadAsStringAsync().Result}]");
+                        throw new Exception($"isProxy: [{queueClient.isProxy}], proxy ip: [{queueClient.ip}]");
                     }
                 }
             }
@@ -99,5 +107,11 @@ namespace ProductSynchronizer.Helpers
             }
         }
 
+    }
+    public enum HttpClientVpnType
+    {
+        NoProxy,
+        MixProxy,
+        OnlyProxy
     }
 }

@@ -1,10 +1,9 @@
-﻿using System;
-using ProductSynchronizer.Parsers;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ProductSynchronizer.Logger;
+using ProductSynchronizer.Parsers;
 using ProductSynchronizer.Utils;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 
 namespace ProductSynchronizer
 {

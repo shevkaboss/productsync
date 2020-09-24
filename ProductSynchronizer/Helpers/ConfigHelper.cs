@@ -51,5 +51,6 @@ namespace ProductSynchronizer.Helpers
         public string Login { get; set; }
         public string Password { get; set; }
         public string UserAgent { get; set; }
+        public Resource? Resource { get; set; }
     }
 }

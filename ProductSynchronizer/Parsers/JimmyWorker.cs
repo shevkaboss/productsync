@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using ProductSynchronizer.Entities;
-using ProductSynchronizer.Logger;
-using ProductSynchronizer.Utils;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -11,6 +8,10 @@ namespace ProductSynchronizer.Parsers
 {
     public class JimmyWorker : WorkerBase
     {
+        public JimmyWorker() : base(Resource.JimmyJazz)
+        {
+
+        }
         protected override List<ISizeMapNode> ParseHtml(string response)
         {
             var jimmyShoesSizeMap = new List<ISizeMapNode>();
