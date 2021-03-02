@@ -15,13 +15,13 @@ namespace ProductSynchronizer
         /// </summary>
         static void Main()
         {
-            //ServiceBase[] ServicesToRun;
-            //ServicesToRun = new ServiceBase[]
-            //{
-            //    new ProductSynchronizer()
-            //};
-            //ServiceBase.Run(ServicesToRun);
-            SyncJob.Start();
+            ServiceBase[] ServicesToRun;
+            ServicesToRun = new ServiceBase[]
+            {
+                new ProductSynchronizer()
+            };
+            ServiceBase.Run(ServicesToRun);
+            //SyncJob.Start();
         }
     }
 }
