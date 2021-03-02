@@ -42,7 +42,7 @@ namespace ProductSynchronizer.Parsers
             Log.WriteLog(
                 $"Synced sizes before convert: [Id - {product.InternalId}], {JsonConvert.SerializeObject(product.ShoesSizeMap)}");
             
-            UpdateSizes(product);
+            UpdateSizesWithExternal(product);
 
             Log.WriteLog(
                 $"Synced sizes after convert: [Id - {product.InternalId}], {JsonConvert.SerializeObject(product.ShoesSizeMap)}");
@@ -117,7 +117,7 @@ namespace ProductSynchronizer.Parsers
         {
             var sizesToRemove = new List<ISizeMapNode>();
             Log.WriteLog(
-                $"Getting size map for: [Resource - {product.Resource}], [Brand - {product.Brand}], [Gender - {product.Gender.ToString()}]");
+                $"Getting size map for: [Resource - {product.Resource}], [Brand - {product.Brand}], [Gender - {product.Gender}]");
 
             var sizeMap = MapsHelper.GetSizesMap(product.Resource, product.Brand, product.Gender);
 
@@ -125,19 +125,18 @@ namespace ProductSynchronizer.Parsers
             {
                 if (sizeMap.ContainsKey(size.ExternalSize))
                 {
-                    size.InternalSize = sizeMap[size.ExternalSize];
+                    size.InternalSize = size.ExternalSize;
 
                     var dbSizeId = MapsHelper.GetSizeDbId(size.InternalSize);
 
-                    if (dbSizeId != default)
+                    if (dbSizeId == default)
                     {
-                        size.OptionValueId = dbSizeId;
-                        continue;
+                        throw new InnerException(product.InternalId,
+                            $"No OptionValueId (Id in DB) found for {size.InternalSize}");
                     }
-                    else
-                    {
-                        throw new InnerException(product.InternalId, $"No OptionValueId (Id in DB) found for {size.InternalSize}");
-                    }
+
+                    size.OptionValueId = dbSizeId;
+                    continue;
                 }
 
                 Log.WriteLog($"[NO SIZE NODE FOUND] No size map node found for {size.ExternalSize}");
@@ -149,6 +148,24 @@ namespace ProductSynchronizer.Parsers
             {
                 Log.WriteLog($"ERROR - Sizes not founded in size map: {string.Join(", ", sizesToRemove.Select(x => x.ExternalSize))}");
                 sizesToRemove.ForEach(x => product.ShoesSizeMap.Remove(x));
+            }
+        }
+
+        private static void UpdateSizesWithExternal(Product product)
+        {
+            foreach (var size in product.ShoesSizeMap)
+            {
+                size.InternalSize = size.ExternalSize;
+
+                var dbSizeId = MapsHelper.GetSizeDbId(size.InternalSize);
+
+                if (dbSizeId == default)
+                {
+                    throw new InnerException(product.InternalId,
+                        $"No OptionValueId (Id in DB) found for {size.InternalSize}");
+                }
+
+                size.OptionValueId = dbSizeId;
             }
         }
         private static void UpdatePrice(Product product)
