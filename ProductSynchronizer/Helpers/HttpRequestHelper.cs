@@ -18,9 +18,9 @@ namespace ProductSynchronizer.Helpers
 
             if (vpnType != HttpClientVpnType.NoProxy)
             {
-                var proxies = ConfigHelper.Config.ProxiesConfig.Where(x => x.Resource.HasValue && x.Resource.Value == resource);
-                if (proxies.Count() == 0){
-                    proxies = ConfigHelper.Config.ProxiesConfig.Where(x => !x.Resource.HasValue);
+                var proxies = ConfigHelper.Config.ProxiesConfig.Where(x => x.Resource.HasValue && x.Resource.Value == resource).ToList();
+                if (!proxies.Any()){
+                    proxies = ConfigHelper.Config.ProxiesConfig.ToList();
                 }
 
                 foreach (var proxyConfig in proxies)
@@ -73,7 +73,7 @@ namespace ProductSynchronizer.Helpers
                     {
                         if (retryCount == 0 && result.StatusCode == HttpStatusCode.Forbidden)
                         {
-                            Thread.Sleep(120000);
+                            Thread.Sleep(600000);
                             Log.WriteLog($"Retrying Request.");
                             retryCount++;
                             continue;

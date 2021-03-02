@@ -66,15 +66,14 @@ namespace ProductSynchronizer.Parsers
                               
                 foreach (var node in nodes)
                 {
-                    if (!dict.ContainsKey(node.ExternalSize))
-                    {
-                        dict.Add(node.ExternalSize, node);
-                        continue;
-                    }
-                    else
+                    if (dict.ContainsKey(node.ExternalSize))
                     {
                         if (dict[node.ExternalSize].ExternalPrice < node.ExternalPrice)
                             dict[node.ExternalSize].ExternalPrice = node.ExternalPrice;
+                    }
+                    else
+                    {
+                        dict.Add(node.ExternalSize, node);
                     }
                 }
             }
@@ -148,7 +147,7 @@ namespace ProductSynchronizer.Parsers
             //Remove not founded map nodes.
             if (sizesToRemove.Count > 0)
             {
-                Log.WriteLog($"ERROR - Sizes not founded in size map: {string.Join(", ", sizesToRemove)}");
+                Log.WriteLog($"ERROR - Sizes not founded in size map: {string.Join(", ", sizesToRemove.Select(x => x.ExternalSize))}");
                 sizesToRemove.ForEach(x => product.ShoesSizeMap.Remove(x));
             }
         }
@@ -196,13 +195,12 @@ namespace ProductSynchronizer.Parsers
             if (price < ConfigHelper.Config.PriceConfig.PriceThreshold * usdCurrencyValue)
             {
                 Log.WriteLog($"Executing price's below the threshold logic.");
-                price += ConfigHelper.Config.PriceConfig.BelowThresholdIncreaseUsd * usdCurrencyValue;
+                price = ConfigHelper.Config.PriceConfig.BelowThresholdIncreaseUsd * (price + 25 * usdCurrencyValue);
             }
             else
             {
                 Log.WriteLog($"Executing price's over the threshold logic.");
-                price = (price * ConfigHelper.Config.PriceConfig.OverThresholdIncreasePercentage / 100) +
-                        (ConfigHelper.Config.PriceConfig.OverThresholdIncreaseUsd * usdCurrencyValue);
+                price = ConfigHelper.Config.PriceConfig.OverThresholdIncreaseUsd * (price + 25 * usdCurrencyValue);
             }
 
             return price;

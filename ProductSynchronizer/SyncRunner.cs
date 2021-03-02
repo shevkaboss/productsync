@@ -25,7 +25,7 @@ namespace ProductSynchronizer
         {
             while (true)
             {
-                Product product = null;
+                Product product;
                 try
                 {
 
@@ -48,11 +48,9 @@ namespace ProductSynchronizer
 
                 Log.WriteLog($"Starting sync for product: {JsonConvert.SerializeObject(product)}");
 
-                Product resultProduct;
-
                 try
                 {
-                    resultProduct = Worker.GetSyncedData(product);
+                    var resultProduct = Worker.GetSyncedData(product);
 
                     if (resultProduct == null)
                     {
@@ -67,13 +65,11 @@ namespace ProductSynchronizer
                 {
                     UnsuccessfulItemsHandler.AddError(e.Error);
                     Log.WriteLog($"Inner error while syncing data: {e.Message} {Environment.NewLine} Stack trace: {e.StackTrace}");
-                    continue;
                 }
                 catch (Exception e)
                 {
                     UnsuccessfulItemsHandler.AddUnsuccessfulProduct(product.InternalId, "Unknown exception thrown");
                     Log.WriteLog($"Unknown error while sync data: {e.Message} {Environment.NewLine} Stack trace: {e.StackTrace}");
-                    continue;
                 }
             }
         }

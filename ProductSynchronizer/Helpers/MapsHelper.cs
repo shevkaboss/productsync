@@ -30,8 +30,14 @@ namespace ProductSynchronizer.Helpers
             try
             {
                 mapNode = SizeMap
-                    .First(x => x.Name.Split(new string[] { "||" }, StringSplitOptions.None).Contains(brand)).MapsByGender
-                    .First(x => x.Gender == gender).MapNodes;
+                    .First(x => x
+                        .Name
+                        .Split(new string[] { "||" }, StringSplitOptions.None)
+                        .Select(b => b.ToLower())
+                        .Contains(brand.ToLower()))
+                    .MapsByGender
+                    .First(x => x.Gender == gender)
+                    .MapNodes;
             }
             catch
             {

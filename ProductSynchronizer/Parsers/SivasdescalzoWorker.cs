@@ -24,6 +24,9 @@ namespace ProductSynchronizer.Parsers
 
             var price = Regex.Match(response, "\"price_info\":{\"final_price\":(.*?),").Groups[1].Value;
 
+            if (response.Contains("<span>Sold out</span>"))
+                return shoesSizeMap;
+
             var sizesContainer = JArray.Parse(regex);
 
             foreach (var sizeNode in sizesContainer)

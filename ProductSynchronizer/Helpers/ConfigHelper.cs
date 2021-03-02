@@ -32,9 +32,8 @@ namespace ProductSynchronizer.Helpers
     public class PriceConfig
     {
         public int PriceThreshold { get; set; }
-        public int BelowThresholdIncreaseUsd { get; set; }
-        public int OverThresholdIncreaseUsd { get; set; }
-        public int OverThresholdIncreasePercentage { get; set; }
+        public double BelowThresholdIncreaseUsd { get; set; }
+        public double OverThresholdIncreaseUsd { get; set; }
     }
 
     public class EmailConfig

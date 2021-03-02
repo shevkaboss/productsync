@@ -6,9 +6,8 @@
     "CurrencyApiUrl": "https://api.minfin.com.ua/summary/3011a97a1aea3bc3f08116ae5b0be7eb01201a7f/",
     "PriceConfig": {
       "PriceThreshold": 100,
-      "BelowThresholdIncreaseUsd": 40,
-      "OverThresholdIncreaseUsd": 20,
-      "OverThresholdIncreasePercentage": 120
+      "BelowThresholdIncreaseUsd": 1.25,
+      "OverThresholdIncreaseUsd": 1.21
     },
     "EmailConfig": {
       "ResultLogMailReciever": "vadimshevchenko20@gmail.com",
@@ -18,18 +17,18 @@
     },
     "ProxiesConfig": [
       {
-        "ProxyIpPort": "193.22.99.44:8000",
-        "Login": "DCJ7TB",
-        "Password": "UjVEsm",
+        "ProxyIpPort": "193.22.97.139:65233",
+        "Login": "rezinilya",
+        "Password": "U4n7LsN",
         "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-      },
-      {
-        "ProxyIpPort": "45.133.223.179:8000",
-        "Login": "ZCnvDq",
-        "Password": "F2H1B2",
-        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
-        "Resource": "Sivasdescalzo"
       }
+      //{
+      //  "ProxyIpPort": "191.101.148.61:65233",
+      //  "Login": "rezinilya",
+      //  "Password": "U4n7LsN",
+      //  "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+      //  "Resource": "Sivasdescalzo"
+      //}
     ]
   }
 }

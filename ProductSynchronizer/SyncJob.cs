@@ -20,9 +20,9 @@ namespace ProductSynchronizer
                 Debugger.Launch();
                 Log.WriteLog("Creating runners");
 
-                var products = MySqlHelper.GetProducts();//.Where(x => x.Location.Contains("footasy")).Take(5);
+                var products = MySqlHelper.GetProducts().ToList();
 
-                var productIds = products.Select(x => x.InternalId.ToString());
+                var productIds = products.Select(x => x.InternalId.ToString()).ToList();
 
                 Log.WriteLog($"Running sync job for products: {string.Join(", ", productIds)}");
 
@@ -38,7 +38,7 @@ namespace ProductSynchronizer
         {
             Log.WriteLog("Creating runners");
 
-            var products = MySqlHelper.GetProducts(); //.Where(x => x.Location.Contains("stockx")).Take(5);
+            var products = MySqlHelper.GetProducts().Where(x => x.InternalId == 8329).Take(5);
 
             var productIds = products.Select(x => x.InternalId.ToString());
 
@@ -46,9 +46,26 @@ namespace ProductSynchronizer
 
             MySqlHelper.UpdateProductsOnStart(productIds);
 
-            var runners = CreateRunners(products);
+            var runners = CreateRunnersTest(products);
 
             StartSynchronization(runners);
+        }
+
+        private static IEnumerable<SyncRunner> CreateRunnersTest(IEnumerable<Product> products)
+        {
+            var prodList = products.ToList();
+            return new List<SyncRunner>
+            {
+                //new SyncRunner(prodList.Where(x => x.Resource == Resource.JimmyJazz), new JimmyWorker()),
+
+                //new SyncRunner(prodList.Where(x => x.Resource == Resource.Goat), new GoatWorker()),
+
+                //new SyncRunner(prodList.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker()),
+
+                //new SyncRunner(prodList.Where(x => x.Resource == Resource.StockX), new StockXWorker()),
+
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.Sivasdescalzo), new SivasdescalzoWorker())
+            };
         }
 
         #region private Methods
@@ -75,7 +92,7 @@ namespace ProductSynchronizer
 
             try
             {
-                Stopwatch sw = Stopwatch.StartNew();
+                var sw = Stopwatch.StartNew();
 
                 foreach (var runner in runners)
                 {
@@ -99,8 +116,10 @@ namespace ProductSynchronizer
             }
             catch
             {
-                Log.WriteLog("Unknown error when running syncers");
+                Log.WriteLog("Unknown error when running sync processes");
             }
+
+            UnsuccessfulItemsHandler.ClearErrors();
         }
         #endregion
     }

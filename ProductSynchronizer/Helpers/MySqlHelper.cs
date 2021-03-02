@@ -113,12 +113,13 @@ namespace ProductSynchronizer.Helpers
         }
         public static void UpdateUnsuccessfulProducts(IEnumerable<string> ids)
         {
-            if (ids.Count() < 1)
+            var values = ids.ToList();
+            if (!values.Any())
                 return;
 
-            Log.WriteLog($"Errors to update {ids.Count()}");
+            Log.WriteLog($"Errors to update {values.Count()}");
 
-            var idsString = string.Join(",", ids);
+            var idsString = string.Join(",", values);
 
             Log.WriteLog($"Updating unsuccessful products: {idsString}");
 
@@ -127,10 +128,11 @@ namespace ProductSynchronizer.Helpers
         }
         public static void UpdateProductsOnStart(IEnumerable<string> ids)
         {
-            if (ids.Count() < 1)
+            var values = ids.ToList();
+            if (!values.Any())
                 return;
 
-            var idsString = string.Join(",", ids);
+            var idsString = string.Join(",", values);
 
             Log.WriteLog($"Updating products on start: {idsString}");
 
