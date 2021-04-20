@@ -29,10 +29,10 @@ namespace ProductSynchronizer.Parsers
                 var isSizeBid = priceNodeText.InnerText.Trim().ToLower() == "bid";
                 var shoeContext = new ShoeContext()
                 {
-                    ExternalSize = Convert.ToDouble(sizeNode.SelectSingleNode(".//div[@class='title']")
+                    ExternalSize = sizeNode.SelectSingleNode(".//div[@class='title']")
                         .InnerText
                         .Replace("us ", "")
-                        .Replace("W",""), CultureInfo.InvariantCulture),
+                        .Trim(),
                     ExternalPrice = isSizeBid ? 0 : Convert.ToDouble(priceNodeText
                         .InnerText
                         .Replace("$", ""), CultureInfo.InvariantCulture),

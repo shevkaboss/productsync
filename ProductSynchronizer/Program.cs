@@ -21,7 +21,7 @@ namespace ProductSynchronizer
                 new ProductSynchronizer()
             };
             ServiceBase.Run(ServicesToRun);
-            //SyncJob.Start();
+            // SyncJob.Start();
         }
     }
 }

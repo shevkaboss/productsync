@@ -36,7 +36,7 @@ namespace ProductSynchronizer.Parsers
                 {
                     var ShoeContext = new ShoeContext()
                     {
-                        ExternalSize = sizeVariantsObject["option2"].ToObject<double>(),
+                        ExternalSize = sizeVariantsObject["option2"].ToObject<string>().Trim(),
                         ExternalPrice = double.Parse(sizeVariantsObject["price"].ToString().Replace("£", ""), CultureInfo.InvariantCulture),
                         Quantity = sizeVariantsObject["stock_status"].ToString() == IN_STOCK_TEXT ?
                       999 : 0

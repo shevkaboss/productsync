@@ -28,7 +28,7 @@ namespace ProductSynchronizer.Parsers
                 var jimmyShoeContext = new JimmyShoeContext
                 {
                     Id = sizeVariantsObject["id"].ToObject<string>(),
-                    ExternalSize = sizeVariantsObject["public_title"].ToObject<double>(),
+                    ExternalSize = sizeVariantsObject["public_title"].ToObject<string>().Trim(),
                     ExternalPrice = double.Parse(price.Insert(price.Length - 2, "."), CultureInfo.InvariantCulture)
                 };
 

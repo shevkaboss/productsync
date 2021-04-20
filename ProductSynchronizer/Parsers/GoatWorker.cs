@@ -28,7 +28,7 @@ namespace ProductSynchronizer.Parsers
                 var price = sizeNode["lowestPriceCents"]["amount"].ToObject<string>();
                 var shoeContext = new ShoeContext()
                 {
-                    ExternalSize = sizeNode["size"].ToObject<double>(),
+                    ExternalSize = sizeNode["size"].ToObject<string>().Trim(),
                     ExternalPrice = double.Parse(price.Substring(0, price.Length - 2), CultureInfo.InvariantCulture),
                     Quantity = 999
                 };

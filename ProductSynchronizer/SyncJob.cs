@@ -38,7 +38,7 @@ namespace ProductSynchronizer
         {
             Log.WriteLog("Creating runners");
 
-            var products = MySqlHelper.GetProducts().Where(x => x.InternalId == 8329).Take(5);
+            var products = MySqlHelper.GetProducts().Where(x => x.InternalId == 4689).Take(5);
 
             var productIds = products.Select(x => x.InternalId.ToString());
 

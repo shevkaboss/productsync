@@ -58,7 +58,7 @@ namespace ProductSynchronizer.Parsers
         private void ParseSizesFromResponse(Product product, string response)
         {
             List<ISizeMapNode> nodes;
-            var dict = new Dictionary<double, ISizeMapNode>();
+            var dict = new Dictionary<string, ISizeMapNode>();
 
             try
             {
@@ -113,43 +113,43 @@ namespace ProductSynchronizer.Parsers
         {
             return;
         }
-        private static void UpdateSizes(Product product)
-        {
-            var sizesToRemove = new List<ISizeMapNode>();
-            Log.WriteLog(
-                $"Getting size map for: [Resource - {product.Resource}], [Brand - {product.Brand}], [Gender - {product.Gender}]");
-
-            var sizeMap = MapsHelper.GetSizesMap(product.Resource, product.Brand, product.Gender);
-
-            foreach (var size in product.ShoesSizeMap)
-            {
-                if (sizeMap.ContainsKey(size.ExternalSize))
-                {
-                    size.InternalSize = size.ExternalSize;
-
-                    var dbSizeId = MapsHelper.GetSizeDbId(size.InternalSize);
-
-                    if (dbSizeId == default)
-                    {
-                        throw new InnerException(product.InternalId,
-                            $"No OptionValueId (Id in DB) found for {size.InternalSize}");
-                    }
-
-                    size.OptionValueId = dbSizeId;
-                    continue;
-                }
-
-                Log.WriteLog($"[NO SIZE NODE FOUND] No size map node found for {size.ExternalSize}");
-                sizesToRemove.Add(size);
-            }
-
-            //Remove not founded map nodes.
-            if (sizesToRemove.Count > 0)
-            {
-                Log.WriteLog($"ERROR - Sizes not founded in size map: {string.Join(", ", sizesToRemove.Select(x => x.ExternalSize))}");
-                sizesToRemove.ForEach(x => product.ShoesSizeMap.Remove(x));
-            }
-        }
+        // private static void UpdateSizes(Product product)
+        // {
+        //     var sizesToRemove = new List<ISizeMapNode>();
+        //     Log.WriteLog(
+        //         $"Getting size map for: [Resource - {product.Resource}], [Brand - {product.Brand}], [Gender - {product.Gender}]");
+        //
+        //     var sizeMap = MapsHelper.GetSizesMap(product.Resource, product.Brand, product.Gender);
+        //
+        //     foreach (var size in product.ShoesSizeMap)
+        //     {
+        //         if (sizeMap.ContainsKey(size.ExternalSize))
+        //         {
+        //             size.InternalSize = size.ExternalSize;
+        //
+        //             var dbSizeId = MapsHelper.GetSizeDbId(size.InternalSize);
+        //
+        //             if (dbSizeId == default)
+        //             {
+        //                 throw new InnerException(product.InternalId,
+        //                     $"No OptionValueId (Id in DB) found for {size.InternalSize}");
+        //             }
+        //
+        //             size.OptionValueId = dbSizeId;
+        //             continue;
+        //         }
+        //
+        //         Log.WriteLog($"[NO SIZE NODE FOUND] No size map node found for {size.ExternalSize}");
+        //         sizesToRemove.Add(size);
+        //     }
+        //
+        //     //Remove not founded map nodes.
+        //     if (sizesToRemove.Count > 0)
+        //     {
+        //         Log.WriteLog($"ERROR - Sizes not founded in size map: {string.Join(", ", sizesToRemove.Select(x => x.ExternalSize))}");
+        //         sizesToRemove.ForEach(x => product.ShoesSizeMap.Remove(x));
+        //     }
+        // }
 
         private static void UpdateSizesWithExternal(Product product)
         {

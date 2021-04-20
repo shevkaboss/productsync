@@ -2,8 +2,8 @@
 {
     public interface ISizeMapNode
     {
-        double InternalSize { get; set; }
-        double ExternalSize { get; set; }
+        string InternalSize { get; set; }
+        string ExternalSize { get; set; }
         int Quantity { get; set; }
         double ExternalPrice { get; set; }
         double InternalPrice { get; set; }

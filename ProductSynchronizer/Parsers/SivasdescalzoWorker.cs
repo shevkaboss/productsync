@@ -11,7 +11,7 @@ namespace ProductSynchronizer.Parsers
 {
     public class SivasdescalzoWorker : WorkerBase
     {
-        public SivasdescalzoWorker():base(Resource.Sivasdescalzo, HttpClientVpnType.OnlyProxy)
+        public SivasdescalzoWorker():base(Resource.Sivasdescalzo)
         {
 
         }
@@ -33,7 +33,7 @@ namespace ProductSynchronizer.Parsers
             {
                 var shoeContext = new ShoeContext()
                 {
-                    ExternalSize = double.Parse(sizeNode["label"].ToObject<string>(), CultureInfo.InvariantCulture),
+                    ExternalSize = sizeNode["label"].ToObject<string>().Trim(),
                     ExternalPrice = Convert.ToDouble(price),
                     Quantity = sizeNode["products"].ToObject<IEnumerable<object>>().Count() != 0 ? 999 : 0
                 };

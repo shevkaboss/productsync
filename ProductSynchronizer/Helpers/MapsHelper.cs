@@ -14,7 +14,7 @@ namespace ProductSynchronizer.Helpers
     {
         private static readonly List<Brand> SizeMap;
         private static readonly Dictionary<Currency, double> CurrencyMap;
-        private static readonly Dictionary<int, double> SizesDbMap;
+        private static readonly Dictionary<int, string> SizesDbMap;
         static MapsHelper()
         {
             var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigHelper.SizesConfigFilePath);
@@ -86,9 +86,9 @@ namespace ProductSynchronizer.Helpers
         {
             return CurrencyMap[currency];
         }
-        public static int GetSizeDbId(double size)
+        public static int GetSizeDbId(string size)
         {
-            return SizesDbMap.FirstOrDefault(x => x.Value == size).Key;
+            return SizesDbMap.FirstOrDefault(x => x.Value == size.ToLower()).Key;
         }
         private static Dictionary<Currency, double> GetCurrencyMap()
         {

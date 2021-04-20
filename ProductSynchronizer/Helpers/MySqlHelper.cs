@@ -87,25 +87,24 @@ namespace ProductSynchronizer.Helpers
                 ExecuteNonReadQuery(updateTotalQuantityIfZeroQuery);
             }
         }
-        public static Dictionary<int, double> GetDbSizesMap()
+        public static Dictionary<int, string> GetDbSizesMap()
         {
             var query = string.Format(SqlQueries.GET_DB_SIZES_MAP);
             var dataSet = ExecuteReadQuery(query);
 
-            var result = new Dictionary<int, double>();
+            var result = new Dictionary<int, string>();
 
             foreach (DataRow row in dataSet.Tables[0].Rows)
             {
                 try
                 {
                     var id = (int)row["option_value_id"];
-                    var value = double.Parse((string)row["name"], CultureInfo.InvariantCulture);
+                    var value = ((string)row["name"]).ToLower().Trim();
 
                     result.Add(id, value);
                 }
                 catch
                 {
-                    continue;
                 }
             }
             return result;
