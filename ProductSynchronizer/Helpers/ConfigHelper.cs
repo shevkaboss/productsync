@@ -51,5 +51,12 @@ namespace ProductSynchronizer.Helpers
         public string Password { get; set; }
         public string UserAgent { get; set; }
         public Resource? Resource { get; set; }
+        public ProxyType Type { get; set; }
+    }
+
+    public enum ProxyType
+    {
+        Http,
+        Socks5
     }
 }

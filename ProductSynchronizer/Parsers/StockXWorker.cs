@@ -9,7 +9,7 @@ namespace ProductSynchronizer.Parsers
 {
     public class StockXWorker : WorkerBase
     {
-        public StockXWorker() :base(Resource.StockX, HttpClientVpnType.MixProxy)
+        public StockXWorker() :base(Resource.StockX, HttpClientVpnType.OnlyProxy)
         {
 
         }

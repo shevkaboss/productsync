@@ -1,0 +1,54 @@
+using ProductSynchronizer.Entities;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using ProductSynchronizer.Helpers;
+
+namespace ProductSynchronizer.Parsers
+{
+    public class StockXWorker : WorkerBase
+    {
+        private const string STOCKX_API_URL = "https://stockx.com/api/products/";
+        
+        public StockXWorker() :base(Resource.StockX, HttpClientVpnType.OnlyProxy)
+        {
+
+        }
+        protected override List<ISizeMapNode> ParseHtml(string response)
+        {
+            var shoesSizeMap = new List<ISizeMapNode>();
+
+            var sizesContainer = JArray.Parse(response)["Product"]?["children"]?
+                .Select(x => x.Children().FirstOrDefault()).ToList();
+
+            if (sizesContainer == null || !sizesContainer.Any())
+            {
+                return shoesSizeMap;
+            }
+
+            foreach (var sizeNode in sizesContainer)
+            {
+                var size = sizeNode["shoeSize"]?.ToObject<string>()?.Trim();
+                var price = sizeNode["market"]?["lowestAsk"]?.ToObject<string>();
+                
+                var shoeContext = new ShoeContext()
+                {
+                    ExternalSize =  size,
+                    ExternalPrice = double.Parse(price, CultureInfo.InvariantCulture),
+                    Quantity = 999
+                };
+
+                shoesSizeMap.Add(shoeContext);
+            }
+
+            return shoesSizeMap;
+        }
+        
+        protected override void UpdateProductLocation(Product product)
+        {
+            var sneakersName = product.Location.Split('/').Last();
+            product.Location = STOCKX_API_URL + sneakersName;
+        }
+    }
+}

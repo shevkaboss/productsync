@@ -1,7 +1,7 @@
 {
   "Configuration": {
     "ThreadsPerResource": 1,
-    "JobCronConfig": "0 30 0 * * ?", //"0 * * ? * * *", 
+    "JobCronConfig": "0 0 12 1/2 * ?", //"0 * * ? * * *", 
     "ConnectionString": "Server=werare.mysql.tools;database=werare_db;UID=werare_db;password=vAaQe4hH",
     "CurrencyApiUrl": "https://api.minfin.com.ua/summary/3011a97a1aea3bc3f08116ae5b0be7eb01201a7f/",
     "PriceConfig": {
@@ -20,15 +20,46 @@
         "ProxyIpPort": "134.202.33.29:65233",
         "Login": "rezinilya",
         "Password": "U4n7LsN",
-        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http"
+      },
+      {
+        "ProxyIpPort": "191.101.148.61:65233",
+        "Login": "rezinilya",
+        "Password": "U4n7LsN",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http"
+      },
+      {
+        "ProxyIpPort": "212.193.141.85:52191",
+        "Login": "7EFCt0NIEi",
+        "Password": "gusvs0jqFo",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http"
+      },
+      {
+        "ProxyIpPort": "212.193.142.70:58559",
+        "Login": "7EFCt0NIEi",
+        "Password": "gusvs0jqFo",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http"
+      },
+      {
+        "ProxyIpPort": "212.193.142.70:58559",
+        "Login": "7EFCt0NIEi",
+        "Password": "gusvs0jqFo",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http",
+        "Resource": "Goat"
+      },
+      {
+        "ProxyIpPort": "212.193.141.85:52191",
+        "Login": "7EFCt0NIEi",
+        "Password": "gusvs0jqFo",
+        "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
+        "Type": "Http",
+        "Resource": "Goat"
       }
-      //{
-      //  "ProxyIpPort": "191.101.148.61:65233",
-      //  "Login": "rezinilya",
-      //  "Password": "U4n7LsN",
-      //  "UserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0",
-      //  "Resource": "Sivasdescalzo"
-      //}
     ]
   }
 }

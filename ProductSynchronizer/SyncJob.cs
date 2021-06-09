@@ -38,7 +38,7 @@ namespace ProductSynchronizer
         {
             Log.WriteLog("Creating runners");
 
-            var products = MySqlHelper.GetProducts().Where(x => x.InternalId == 4689).Take(5);
+            var products = MySqlHelper.GetProducts().Where(x => x.Resource == Resource.StockX && x.InternalId == 10244).Take(5);
 
             var productIds = products.Select(x => x.InternalId.ToString());
 
@@ -62,9 +62,9 @@ namespace ProductSynchronizer
 
                 //new SyncRunner(prodList.Where(x => x.Resource == Resource.Footasylum), new FootasylumWorker()),
 
-                //new SyncRunner(prodList.Where(x => x.Resource == Resource.StockX), new StockXWorker()),
+                new SyncRunner(prodList.Where(x => x.Resource == Resource.StockX), new StockXWorker()),
 
-                new SyncRunner(prodList.Where(x => x.Resource == Resource.Sivasdescalzo), new SivasdescalzoWorker())
+                //new SyncRunner(prodList.Where(x => x.Resource == Resource.Sivasdescalzo), new SivasdescalzoWorker())
             };
         }
 

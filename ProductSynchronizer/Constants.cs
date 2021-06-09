@@ -17,14 +17,12 @@ namespace ProductSynchronizer
     public static class SqlQueries
     {
         public const string GET_PRODUCTS_QUERY =
-            @"Select p.product_id, o.product_option_id, p.location, m.name, pc.category_id
+            @"Select p.product_id, o.product_option_id, p.location, m.name
                 from oc_product p
                     INNER JOIN oc_manufacturer m on p.manufacturer_id = m.manufacturer_id
-                    INNER JOIN oc_product_to_category pc on p.product_id = pc.product_id
                     INNER JOIN oc_product_option o on p.product_id = o.product_id
                 where location is not null
-                    and location != """"
-                    and pc.category_id in (59,60)";
+                    and location != """"";
         public const string UPDATE_PRODUCT_QUERY_BASE = 
             @"INSERT INTO oc_product_option_value(
                 product_option_id,

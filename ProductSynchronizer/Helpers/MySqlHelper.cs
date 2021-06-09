@@ -19,21 +19,12 @@ namespace ProductSynchronizer.Helpers
 
             foreach (DataRow row in dataSet.Tables[0].Rows)
             {
-                var newProduct = (new Product
+                var newProduct = new Product
                 {
                     InternalId = (int)row["product_id"],
                     ProductOptionId = (int)row["product_option_id"],
                     Location = (string)row["location"],
                     Brand = (string)row["name"],
-                    Gender = (Gender)row["category_id"]
-                });
-
-                var existingProd = products.FirstOrDefault(x => x.InternalId == newProduct.InternalId && x.Gender == Gender.Female);
-
-                if (existingProd != null && newProduct.Gender == Gender.Male)
-                {
-                    existingProd.Gender = Gender.Male;
-                    continue;
                 };
 
                 products.Add(newProduct);

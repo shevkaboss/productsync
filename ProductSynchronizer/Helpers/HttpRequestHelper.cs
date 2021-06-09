@@ -20,7 +20,7 @@ namespace ProductSynchronizer.Helpers
             {
                 var proxies = ConfigHelper.Config.ProxiesConfig.Where(x => x.Resource.HasValue && x.Resource.Value == resource).ToList();
                 if (!proxies.Any()){
-                    proxies = ConfigHelper.Config.ProxiesConfig.ToList();
+                    proxies = ConfigHelper.Config.ProxiesConfig.Where(x => !x.Resource.HasValue).ToList();
                 }
 
                 foreach (var proxyConfig in proxies)
@@ -51,7 +51,7 @@ namespace ProductSynchronizer.Helpers
         public string PerformGetRequest(string url)
         {
             Log.WriteLog($"Get request for url: {url}");
-            var retryCount = 0;
+            Thread.Sleep(_httpClients.Count <= 2 ? 40000 : 25000);
 
             while (true)
             {
@@ -61,6 +61,7 @@ namespace ProductSynchronizer.Helpers
                     _httpClients.Enqueue(queueClient);
 
                     request.Headers.Add("User-Agent", queueClient.userAgent);
+                    request.Headers.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
 
                     var response = queueClient.httpClient.SendAsync(request);
                     var result = response.Result;
@@ -69,18 +70,9 @@ namespace ProductSynchronizer.Helpers
 
                     if (result.StatusCode == HttpStatusCode.OK)
                         return result.Content.ReadAsStringAsync().Result;
-                    else
-                    {
-                        if (retryCount == 0 && result.StatusCode == HttpStatusCode.Forbidden)
-                        {
-                            Thread.Sleep(600000);
-                            Log.WriteLog($"Retrying Request.");
-                            retryCount++;
-                            continue;
-                        }
-                        Log.WriteLog($"isProxy: [{queueClient.isProxy}], user-agent: [{queueClient.userAgent}], proxy ip: [{queueClient.ip}], response: [{result.Content?.ReadAsStringAsync().Result}]");
-                        throw new Exception($"isProxy: [{queueClient.isProxy}], proxy ip: [{queueClient.ip}]");
-                    }
+                    
+                    Log.WriteLog($"isProxy: [{queueClient.isProxy}], user-agent: [{queueClient.userAgent}], proxy ip: [{queueClient.ip}], response: [{result.Content?.ReadAsStringAsync().Result}]");
+                    throw new Exception($"isProxy: [{queueClient.isProxy}], proxy ip: [{queueClient.ip}]");
                 }
             }
         }
