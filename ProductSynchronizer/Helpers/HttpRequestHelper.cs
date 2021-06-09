@@ -61,7 +61,6 @@ namespace ProductSynchronizer.Helpers
                     _httpClients.Enqueue(queueClient);
 
                     request.Headers.Add("User-Agent", queueClient.userAgent);
-                    request.Headers.Accept.ParseAdd("text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
 
                     var response = queueClient.httpClient.SendAsync(request);
                     var result = response.Result;
