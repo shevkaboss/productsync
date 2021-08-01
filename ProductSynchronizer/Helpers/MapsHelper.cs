@@ -12,10 +12,11 @@ namespace ProductSynchronizer.Helpers
 {
     public static class MapsHelper
     {
-        private static readonly List<Brand> SizeMap;
-        private static readonly Dictionary<Currency, double> CurrencyMap;
-        private static readonly Dictionary<int, string> SizesDbMap;
-        static MapsHelper()
+        private static List<Brand> SizeMap;
+        private static Dictionary<Currency, double> CurrencyMap;
+        private static Dictionary<int, string> SizesDbMap;
+
+        public static void UpdateMaps()
         {
             var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigHelper.SizesConfigFilePath);
 
@@ -24,6 +25,7 @@ namespace ProductSynchronizer.Helpers
             CurrencyMap = GetCurrencyMap();
             SizesDbMap = MySqlHelper.GetDbSizesMap();
         }
+
         public static Dictionary<double, double> GetSizesMap(Resource resource, string brand, Gender gender)
         {
             MapNode[] mapNode = null;

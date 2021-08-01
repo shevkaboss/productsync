@@ -62,34 +62,33 @@ namespace ProductSynchronizer.Parsers
 
             try
             {
-                nodes = ParseHtml(response);
-                              
-                foreach (var node in nodes)
-                {
-                    if (dict.ContainsKey(node.ExternalSize))
-                    {
-                        if (dict[node.ExternalSize].ExternalPrice < node.ExternalPrice)
-                            dict[node.ExternalSize].ExternalPrice = node.ExternalPrice;
-                    }
-                    else
-                    {
-                        dict.Add(node.ExternalSize, node);
-                    }
-                }
+                nodes = ParseHtml(response);                      
             }
             catch (Exception e)
             {
-                Log.WriteLog($"Error parsing html: {e.Message}");
-                throw new InnerException(product.InternalId, $"Error while parsing html: {e.Message}", true);
+                Log.WriteLog($"Error parsing html: {e.Message}, response: {response}");
+                throw new InnerException(product.InternalId, $"Ошибка парсинга с ссылки - {product.Location}", true);
             }
 
             if (nodes.Count == 0)
             {
-                throw new InnerException(product.InternalId, "No sizes found while parsing html", true);
+                throw new InnerException(product.InternalId, "Не найдено размеров и цен.", true);
+            }
+
+            foreach (var node in nodes)
+            {
+                if (dict.ContainsKey(node.ExternalSize))
+                {
+                    if (dict[node.ExternalSize].ExternalPrice < node.ExternalPrice)
+                        dict[node.ExternalSize].ExternalPrice = node.ExternalPrice;
+                }
+                else
+                {
+                    dict.Add(node.ExternalSize, node);
+                }
             }
 
             product.ShoesSizeMap = dict.Values.ToList();
-
         }
 
         public void UpdateProductInDb(Product product)
@@ -187,9 +186,18 @@ namespace ProductSynchronizer.Parsers
                     var price = GetUpdatedPrice(currencyValue, usdCurrencyValue, sizeMapNode.ExternalPrice);
 
                     sizeMapNode.InternalPrice = price;
-                }   
+                }
 
-                commonExternalPrice = product.ShoesSizeMap.Where(x => x.Quantity > 0).Min(x => x.ExternalPrice);
+                var productsInBid = product.ShoesSizeMap.Where(x => x.Quantity > 0);
+
+                if (productsInBid.Count() > 0)
+                {
+                    commonExternalPrice = productsInBid.Min(x => x.ExternalPrice);
+                }
+                else
+                {
+                    commonExternalPrice = product.ShoesSizeMap.Min(x => x.ExternalPrice);
+                }
             }
             else
             {               

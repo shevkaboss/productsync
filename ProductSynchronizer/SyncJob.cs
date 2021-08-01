@@ -38,7 +38,7 @@ namespace ProductSynchronizer
         {
             Log.WriteLog("Creating runners");
 
-            var products = MySqlHelper.GetProducts().Where(x => x.Resource == Resource.StockX && x.InternalId == 10244).Take(5);
+            var products = MySqlHelper.GetProducts().Where(x => x.Resource == Resource.StockX && x.InternalId == 11910).Take(5);
 
             var productIds = products.Select(x => x.InternalId.ToString());
 
@@ -89,6 +89,8 @@ namespace ProductSynchronizer
         private static void StartSynchronization(IEnumerable<SyncRunner> runners)
         {
             var threads = new List<Thread>();
+
+            MapsHelper.UpdateMaps();
 
             try
             {

@@ -68,7 +68,7 @@ namespace ProductSynchronizer
                 }
                 catch (Exception e)
                 {
-                    UnsuccessfulItemsHandler.AddUnsuccessfulProduct(product.InternalId, "Unknown exception thrown");
+                    UnsuccessfulItemsHandler.AddUnsuccessfulProduct(product.InternalId, "Техническая ошибка");
                     Log.WriteLog($"Unknown error while sync data: {e.Message} {Environment.NewLine} Stack trace: {e.StackTrace}");
                 }
             }
